@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reset — Concrete Quoter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#DEDAD1;--panel:#F3F1EC;--panel-2:#E9E6DE;--ink:#181A1D;--ink-soft:#5A5C5E;
+  --line:#C7C2B7;--line-strong:#A9A398;--steel:#33434F;--steel-ink:#26333C;
+  --amber:#E3921F;--amber-dark:#C97A12;--brick:#9E3C2E;--good:#2F6F4F;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Roboto Mono",monospace;
+  --disp:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,Segoe UI,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--body);background:var(--page);color:var(--ink);font-size:15px;line-height:1.4;-webkit-font-smoothing:antialiased}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+header.masthead{background:var(--steel);color:#F3F1EC;border-bottom:4px solid var(--amber);padding:14px 22px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:40}
+.brandmark{font-family:var(--disp);font-weight:700;font-size:30px;letter-spacing:.5px;text-transform:uppercase;line-height:1;color:#fff}
+.brandmark small{display:block;font-size:11px;letter-spacing:3px;color:var(--amber);font-weight:600}
+.masthead .spacer{flex:1}
+.mast-btn{font-family:var(--disp);font-weight:600;text-transform:uppercase;letter-spacing:1px;font-size:14px;background:transparent;color:#EDEAE3;border:1px solid #56646E;padding:8px 14px;border-radius:3px;cursor:pointer}
+.mast-btn:hover{border-color:var(--amber);color:#fff}
+.mast-btn.primary{background:var(--amber);border-color:var(--amber);color:#211a09}
+.mast-btn.primary:hover{background:var(--amber-dark)}
+nav.tabs{display:flex;background:var(--panel-2);border-bottom:1px solid var(--line-strong);padding:0 14px;position:sticky;top:63px;z-index:30}
+nav.tabs button{font-family:var(--disp);font-weight:600;text-transform:uppercase;letter-spacing:1px;font-size:15px;background:none;border:none;border-bottom:3px solid transparent;padding:13px 18px;cursor:pointer;color:var(--ink-soft)}
+nav.tabs button:hover{color:var(--ink)}
+nav.tabs button.active{color:var(--ink);border-bottom-color:var(--amber)}
+main{max-width:1200px;margin:0 auto;padding:22px 22px 130px}
+.view{display:none}.view.active{display:block}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:18px 20px;margin-bottom:18px}
+.panel h2{font-family:var(--disp);text-transform:uppercase;letter-spacing:1.5px;font-size:19px;margin:0 0 4px;font-weight:700}
+.panel .sub{color:var(--ink-soft);font-size:13px;margin:0 0 16px}
+label.fld{display:block;font-size:12px;letter-spacing:.5px;text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px;font-weight:600}
+input,select,textarea{font-family:var(--body);font-size:15px;color:var(--ink);background:#fff;border:1px solid var(--line-strong);border-radius:3px;padding:8px 9px;width:100%}
+input.num,td input{font-family:var(--mono);font-variant-numeric:tabular-nums}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--amber);outline-offset:-1px;border-color:var(--amber)}
+input:disabled{background:var(--panel-2);color:var(--ink-soft)}
+.grid{display:grid;gap:12px 14px}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}.g4{grid-template-columns:repeat(4,1fr)}.g5{grid-template-columns:repeat(5,1fr)}.g6{grid-template-columns:repeat(6,1fr)}
+.field{min-width:0}.hint{font-size:12px;color:var(--ink-soft);margin-top:3px}
+.btn{font-family:var(--disp);font-weight:600;text-transform:uppercase;letter-spacing:1px;font-size:14px;padding:9px 16px;border-radius:3px;cursor:pointer;border:1px solid var(--steel);background:var(--steel);color:#fff}
+.btn:hover{background:var(--steel-ink)}
+.btn.amber{background:var(--amber);border-color:var(--amber);color:#211a09}.btn.amber:hover{background:var(--amber-dark)}
+.btn.ghost{background:transparent;color:var(--steel);border-color:var(--line-strong)}.btn.ghost:hover{border-color:var(--steel);color:var(--ink)}
+.btn.sm{padding:5px 11px;font-size:13px}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.x-btn{background:none;border:none;color:var(--brick);font-size:20px;cursor:pointer;line-height:1;padding:0 4px;font-weight:700}
+.x-btn:hover{color:#7a2c22}
+.pill{display:inline-block;font-family:var(--disp);font-size:11px;letter-spacing:1px;text-transform:uppercase;background:var(--panel-2);border:1px solid var(--line-strong);border-radius:20px;padding:3px 11px;color:var(--ink-soft)}
+.pour{border:1px solid var(--line-strong);border-radius:6px;margin-bottom:22px;background:var(--panel);overflow:hidden}
+.pour-head{background:var(--steel);color:#EDEAE3;padding:10px 16px;display:flex;align-items:center;gap:14px}
+.pour-head input.pour-name{background:rgba(255,255,255,.1);border:1px solid #56646E;color:#fff;font-family:var(--disp);font-size:19px;font-weight:600;letter-spacing:1px;width:auto;flex:1;text-transform:uppercase;padding:5px 10px}
+.pour-head .pour-total{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--amber)}
+.pour-head .pt-lbl{font-family:var(--disp);text-transform:uppercase;letter-spacing:1.5px;font-size:11px;color:#B9C2C9;text-align:right}
+.pour-body{padding:16px 18px}
+.pour-config{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;padding-bottom:14px;border-bottom:1px dashed var(--line-strong);margin-bottom:14px}
+.element{border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:4px;background:#fff;margin-bottom:14px}
+.element-head{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--panel-2);border-bottom:1px solid var(--line)}
+.element-head .etype{font-family:var(--disp);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;font-size:15px;color:var(--steel-ink)}
+.element-head input.elabel{width:auto;flex:1;max-width:260px;padding:5px 8px}
+.element-head .ecost{font-family:var(--mono);font-weight:600;font-size:15px;margin-left:auto}
+.element-body{padding:14px}
+.element-out{background:var(--steel-ink);color:#DCE2E6;border-radius:4px;padding:12px 14px;margin-top:12px;font-size:13.5px}
+.element-out .oline{display:flex;justify-content:space-between;gap:12px;padding:3px 0;border-bottom:1px solid #3a4750}
+.element-out .oline:last-child{border-bottom:none}
+.element-out .oline .v{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.element-out h5{font-family:var(--disp);text-transform:uppercase;letter-spacing:1.5px;margin:9px 0 4px;color:#fff;font-size:13px}
+.element-out .buylist{font-family:var(--mono);font-size:12.5px;color:#B9C2C9;line-height:1.7}
+.el-details{margin-top:12px}
+.el-details>summary{cursor:pointer;list-style:none;font-family:var(--disp);text-transform:uppercase;letter-spacing:1.2px;font-size:12px;color:var(--muted);padding:7px 10px;user-select:none;background:var(--panel-2,#f2efe9);border:1px solid var(--line);border-radius:4px}
+.el-details>summary::-webkit-details-marker{display:none}
+.el-details>summary::before{content:'▸ ';color:var(--accent)}
+.el-details[open]>summary::before{content:'▾ '}
+.el-details .element-out{margin-top:6px}
+.sub-lbl{font-family:var(--disp);text-transform:uppercase;letter-spacing:1.5px;font-size:12px;color:var(--steel);margin:14px 0 6px;border-bottom:1px solid var(--line);padding-bottom:3px}
+.add-el-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:4px}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:35;background:var(--steel);color:#EDEAE3;border-top:4px solid var(--amber);padding:11px 22px;display:flex;align-items:center;gap:24px}
+.dock .d-item{display:flex;flex-direction:column;line-height:1.15}
+.dock .d-item .lbl{font-family:var(--disp);text-transform:uppercase;letter-spacing:1.5px;font-size:11px;color:#B9C2C9}
+.dock .d-item .val{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:19px;font-weight:600;color:#fff}
+.dock .d-item.total .val{color:var(--amber);font-size:24px}
+.dock .spacer{flex:1}
+.price-cat{margin-bottom:22px}
+.price-cat h3{font-family:var(--disp);text-transform:uppercase;letter-spacing:1px;font-size:16px;margin:0 0 8px;color:var(--steel-ink)}
+table.prices{width:100%;border-collapse:collapse}
+table.prices td{padding:5px 8px;border-bottom:1px solid var(--line)}
+table.prices td:first-child{width:60%}
+table.prices input{width:130px;text-align:right}
+/* shape editor */
+.shape-wrap{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.shape-canvas{background:#fff;border:1px solid var(--line-strong);border-radius:4px;touch-action:none;flex:0 0 auto}
+.shape-side{flex:1;min-width:280px}
+.rect-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.rect-tbl th{font-family:var(--disp);text-transform:uppercase;letter-spacing:.5px;font-size:11px;color:var(--ink-soft);text-align:left;padding:2px 4px}
+.rect-tbl td{padding:2px 4px}
+.rect-tbl input{padding:5px 6px;text-align:right}
+.rect-tbl select{padding:5px 6px}
+.rect-swatch{width:12px;height:12px;border-radius:2px;display:inline-block;vertical-align:middle;margin-right:5px}
+.addition{border:1px dashed var(--line-strong);border-radius:4px;padding:10px 12px;margin-bottom:10px;background:var(--panel)}
+.addition .ahead{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.addition .aname{font-family:var(--disp);text-transform:uppercase;letter-spacing:1px;font-weight:700;color:var(--steel-ink);font-size:14px}
+.chk{display:flex;align-items:center;gap:6px;font-size:13px}.chk input{width:auto}
+#toast{position:fixed;bottom:78px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:4px;opacity:0;pointer-events:none;transition:.25s;font-size:14px;z-index:60;border-left:3px solid var(--amber)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#printArea{display:none}
+@media print{header.masthead,nav.tabs,.dock,.no-print,#toast{display:none!important}body{background:#fff}main{display:none}#printArea{display:block}@page{margin:16mm}}
+.quote-doc{max-width:820px;margin:0 auto;color:#111;font-family:var(--body)}
+.quote-doc .qh{display:flex;justify-content:space-between;border-bottom:3px solid var(--steel);padding-bottom:12px;margin-bottom:16px}
+.quote-doc .qh .co{font-family:var(--disp);font-size:34px;font-weight:700;text-transform:uppercase;line-height:1;color:var(--steel-ink)}
+.quote-doc .qh .co small{display:block;font-size:12px;letter-spacing:3px;color:var(--amber-dark);font-weight:600}
+.quote-doc h4{font-family:var(--disp);text-transform:uppercase;letter-spacing:1px;font-size:14px;color:var(--steel);margin:16px 0 6px;border-bottom:1px solid #ccc;padding-bottom:3px}
+.quote-doc table{width:100%;border-collapse:collapse;font-size:13px}
+.quote-doc th{text-align:left;border-bottom:2px solid #333;padding:6px 4px;font-family:var(--disp);text-transform:uppercase;letter-spacing:.5px}
+.quote-doc th.r,.quote-doc td.r{text-align:right}
+.quote-doc td{padding:5px 4px;border-bottom:1px solid #ddd}
+.quote-doc .totals{margin-left:auto;width:340px;margin-top:12px}
+.quote-doc .totals .tr{display:flex;justify-content:space-between;padding:4px 0}
+.quote-doc .totals .tr.grand{border-top:2px solid var(--steel);font-weight:700;font-size:17px;margin-top:4px;padding-top:8px}
+.quote-doc .note{font-size:12px;color:#555;margin-top:20px;white-space:pre-wrap;border-top:1px solid #ccc;padding-top:10px}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="brandmark">RESET<small>CONCRETE QUOTER</small></div>
+  <div class="spacer"></div>
+  <button class="mast-btn" onclick="newJob()">New</button>
+  <button class="mast-btn" onclick="saveFile()">Save file</button>
+  <button class="mast-btn" onclick="document.getElementById('loadInput').click()">Open file</button>
+  <input type="file" id="loadInput" accept=".json" style="display:none" onchange="loadFile(event)">
+  <button class="mast-btn primary" onclick="printQuote()">Export / Print quote</button>
+</header>
+<nav class="tabs">
+  <button data-tab="job" class="active" onclick="showTab('job')">Job &amp; pours</button>
+  <button data-tab="settings" onclick="showTab('settings')">Rates &amp; labour</button>
+  <button data-tab="prices" onclick="showTab('prices')">Material prices</button>
+  <button data-tab="parts" onclick="showTab('parts')">Parts list</button>
+  <button data-tab="partsbysection" onclick="showTab('partsbysection')">Parts by section</button>
+  <button data-tab="labour" onclick="showTab('labour')">Labour</button>
+</nav>
+<main>
+  <section id="tab-job" class="view active">
+    <div class="panel">
+      <h2>Job details</h2><p class="sub">Header for the exported quote.</p>
+      <div class="grid g3">
+        <div class="field"><label class="fld">Client / builder</label><input id="j_client" oninput="saveState()"></div>
+        <div class="field"><label class="fld">Site address</label><input id="j_site" oninput="saveState()"></div>
+        <div class="field"><label class="fld">Quote number</label><input id="j_number" class="num" oninput="saveState()"></div>
+        <div class="field"><label class="fld">Date</label><input id="j_date" type="date" class="num" oninput="saveState()"></div>
+        <div class="field"><label class="fld">Contact / phone</label><input id="j_contact" oninput="saveState()"></div>
+        <div class="field"><label class="fld">Job description</label><input id="j_desc" oninput="saveState()"></div>
+      </div>
+    </div>
+    <div id="poursWrap"></div>
+    <div class="btn-row"><button class="btn amber" onclick="addPour()">+ Add pour</button></div>
+    <div class="panel" style="margin-top:22px">
+      <h2>Quote totals</h2>
+      <div class="grid g4">
+        <div class="field"><label class="fld">Markup %</label><input id="q_markup" class="num" type="number" value="40" oninput="recalc()"><div class="hint">Your usual 40%.</div></div>
+        <div class="field"><label class="fld">Additional costs ($)</label><input id="q_addcost" class="num" type="number" value="0" oninput="recalc()"><div class="hint">Extra materials/hire (before markup).</div></div>
+        <div class="field"><label class="fld">Additional charge ($)</label><input id="q_adj" class="num" type="number" value="0" oninput="recalc()"><div class="hint">Flat add after markup.</div></div>
+        <div class="field"><label class="fld">GST %</label><input id="q_gst" class="num" type="number" value="10" oninput="recalc()"></div>
+      </div>
+      <div id="chargeBox" style="margin-top:16px;padding-top:14px;border-top:1px dashed var(--line-strong)"></div>
+      <div class="field" style="margin-top:14px"><label class="fld">Notes / terms on quote</label><textarea id="q_notes" rows="3" oninput="saveState()" placeholder="Excludes engineering, survey, traffic control. Valid 30 days. 10% deposit on acceptance."></textarea></div>
+    </div>
+  </section>
+  <section id="tab-settings" class="view">
+    <div class="panel">
+      <h2>Rates &amp; labour</h2><p class="sub">Global settings. Labour is auto-calculated as a percentage of materials (your spreadsheet model) unless a pour is set to manual.</p>
+      <div class="grid g4">
+        <div class="field"><label class="fld">Labour % of materials</label><input id="s_labourpct" class="num" type="number" value="80" oninput="editSetting('labourPercent',this.value)"><div class="hint">Usually 80; up to ~100 for suspended work.</div></div>
+        <div class="field"><label class="fld">Man-day rate ($)</label><input id="s_manday" class="num" type="number" value="650" oninput="editSetting('manDayRate',this.value)"><div class="hint">Converts labour $ into man-days.</div></div>
+        <div class="field"><label class="fld">Concrete spillage %</label><input id="s_spill" class="num" type="number" value="10" oninput="editSetting('spillage',this.value)"></div>
+        <div class="field"><label class="fld">Steel lap factor</label><input id="s_lap" class="num" type="number" step="0.01" value="1.25" oninput="editSetting('lapFactor',this.value)"></div>
+        <div class="field"><label class="fld">Bar stock length (m)</label><input id="s_stock" class="num" type="number" value="6" oninput="editSetting('stockLength',this.value)"></div>
+        <div class="field"><label class="fld">Lap length (m)</label><input id="s_laplen" class="num" type="number" step="0.1" value="0.5" oninput="editSetting('lapLength',this.value)"></div>
+        <div class="field"><label class="fld">Mesh sheet (m²)</label><input id="s_mesh" class="num" type="number" value="14.4" oninput="editSetting('meshSheet',this.value)"></div>
+        <div class="field"><label class="fld">Chairs per m²</label><input id="s_chairs" class="num" type="number" value="4" oninput="editSetting('chairsPerM2',this.value)"></div>
+      </div>
+      <h2 style="margin-top:22px">Formwork</h2><p class="sub">Reusable formwork (edgeboard, pickets, ply deck, props, bearers) is costed at the "new %" below — the portion you consume/replace each job. Class-2 suspended jobs cost the visible ply faces at 100% new automatically.</p>
+      <div class="grid g4">
+        <div class="field"><label class="fld">Formwork new %</label><input id="s_newfw" class="num" type="number" value="30" oninput="editSetting('newFormworkPct',this.value)"><div class="hint">% of reusable formwork assumed bought new / consumed.</div></div>
+        <div class="field"><label class="fld">Star picket spacing (m)</label><input id="s_picket" class="num" type="number" step="0.1" value="1.0" oninput="editSetting('picketSpacing',this.value)"></div>
+        <div class="field"><label class="fld">Edgeboard 150→200 at (mm)</label><input id="s_edge" class="num" type="number" value="150" oninput="editSetting('edgeThreshold',this.value)"><div class="hint">Slab/edge depth over this uses LVL 200.</div></div>
+        <div class="field"><label class="fld">Deck joist spacing (m)</label><input id="s_joist" class="num" type="number" step="0.05" value="0.45" oninput="editSetting('joistSpacing',this.value)"></div>
+        <div class="field"><label class="fld">Deck bearer spacing (m)</label><input id="s_bearer" class="num" type="number" step="0.1" value="0.9" oninput="editSetting('bearerSpacing',this.value)"></div>
+        <div class="field"><label class="fld">Prop grid (m)</label><input id="s_propgrid" class="num" type="number" step="0.1" value="1.2" oninput="editSetting('propGrid',this.value)"><div class="hint">Props on a grid of this spacing under suspended work.</div></div>
+        <div class="field"><label class="fld">Cantilever prop grid (m)</label><input id="s_cantgrid" class="num" type="number" step="0.1" value="0.9" oninput="editSetting('cantPropGrid',this.value)"><div class="hint">Tighter grid for propped/backpropped cantilevers.</div></div>
+        <div class="field"><label class="fld">Cantilever labour (md/m²)</label><input id="s_cantlab" class="num" type="number" step="0.05" value="0.15" oninput="editSetting('cantLabourMdPerM2',this.value)"><div class="hint">Auto man-days added per m² of cantilever.</div></div>
+        <div class="field"><label class="fld">Backprop factor</label><input id="s_backprop" class="num" type="number" step="0.5" value="2" oninput="editSetting('backpropFactor',this.value)"><div class="hint">×props for backpropping (2 = top &amp; bottom).</div></div>
+      </div>
+      <h2 style="margin-top:22px">Labour — slab m² bands</h2><p class="sub">The man-days a flat ground slab takes, by area. Used when a pour's labour is set to "Auto — by slab m²". Editable, and each shows its default so you can revert. Above the top band: base days + one day per "per extra m²".</p>
+      <div id="bandEditor" class="grid g4"></div>
+      <div class="btn-row"><button class="btn ghost sm" onclick="resetAreaBand()">Reset bands to defaults</button></div>
+    </div>
+  </section>
+  <section id="tab-labour" class="view">
+    <div class="panel">
+      <h2>Labour breakdown</h2><p class="sub">Every pour's labour in man-days and dollars — the base labour (m² band, % of materials, or manual) plus each section's extra crew, excavation and cantilever days. Man-day rate is set under Rates &amp; labour.</p>
+      <div id="labourWrap"></div>
+      <div class="btn-row"><button class="btn amber" onclick="printLabour()">Print labour breakdown</button></div>
+    </div>
+  </section>
+  <section id="tab-prices" class="view">
+    <div class="panel">
+      <h2>Material prices</h2><p class="sub">From your Prices.json — mixes ($/m³), steel tonnage &amp; mesh, chairs. Edit any value; everything recalculates.</p>
+      <div id="pricesEditor"></div>
+      <div class="btn-row"><button class="btn ghost sm" onclick="resetPrices()">Reset to defaults</button></div>
+    </div>
+  </section>
+  <section id="tab-parts" class="view">
+    <div class="panel">
+      <h2>Parts list / order</h2><p class="sub">Everything the job needs, rolled up across all pours and elements — concrete by mix, reinforcement, and formwork. Quantities are the full amount required on site; formwork reusable gear is costed at your "new %".</p>
+      <div id="partsWrap"></div>
+      <div class="btn-row"><button class="btn amber" onclick="printParts()">Print parts list</button></div>
+    </div>
+  </section>
+  <section id="tab-partsbysection" class="view">
+    <div class="panel">
+      <h2>Parts by pour &amp; section</h2><p class="sub">Split automatically by pour — expand a pour to see each section (slab, beam, upturn, cantilever, stairs) with its own concrete, steel and formwork. Use the toggles to pick what you want to see.</p>
+      <div id="partsSecWrap"></div>
+      <div class="btn-row"><button class="btn amber" onclick="printPartsBySection()">Print by section</button></div>
+    </div>
+  </section>
+</main>
+<div class="dock no-print">
+  <div class="d-item"><span class="lbl">Pours</span><span class="val" id="dock_pours">0</span></div>
+  <div class="d-item"><span class="lbl">Concrete</span><span class="val num" id="dock_conc">0 m³</span></div>
+  <div class="d-item"><span class="lbl">Steel</span><span class="val num" id="dock_steel">0 t</span></div>
+  <div class="d-item"><span class="lbl">Man-days</span><span class="val num" id="dock_md">0</span></div>
+  <div class="d-item"><span class="lbl" id="dock_cost_lbl">Total cost</span><span class="val num" id="dock_cost">$0</span></div>
+  <div class="d-item"><span class="lbl">Materials</span><span class="val num" id="dock_materials">$0</span></div>
+  <div class="d-item"><span class="lbl">Labour</span><span class="val num" id="dock_labour">$0</span></div>
+  <div class="spacer"></div>
+  <div class="d-item"><span class="lbl">Quote (ex GST)</span><span class="val num" id="dock_exgst">$0</span></div>
+  <div class="d-item total"><span class="lbl">Quote (inc GST)</span><span class="val num" id="dock_quote">$0</span></div>
+</div>
+<div id="toast"></div>
+<div id="printArea"></div>
+<script>
+const DEFAULT_PRICES={
+  concrete_mixes_data:{"20/20/80":260,"25/20/80":285,"25/10/80":290,"25/10/80 Long Line":320,"32/10/80":305,"32/20/80":295,"40/10/80":325,"40/20/80":315,"Wallmix":330},
+  steel_data:{"Tonnage":2350,"SL72":85,"SL82":91,"SL92":105,"SL102":150},
+  steel_additions_data:{"Tie wire":8,
+    "SOG 25/40 chairs 100":30,"SOG 50/65 chairs 100":40,"SOG 75/90 chairs 100":50,"SOG 85/100 chairs 100":55,
+    "SOG 105/110 chairs 100":60,"SOG 115/120 chairs 100":65,"SOG 125/130 chairs 100":70,"SOG 135/140 chairs 100":75,"SOG 145/150 chairs 100":85,
+    "SS 20mm chairs 200":40,"SS 25/30/40mm chairs 100":50,"SS 50/65/75mm chairs 100":80,"SS 90/100mm 100":90,
+    "SS 110/120mm chairs 50":60,"SS 130/140mm chairs 50":80,"SS 150mm chairs 50":100,"SS 160mm chairs 50":140,"SS 170mm chairs 50":150,"SS >180mm chairs 25":130},
+  formwork_data:{"LVL 150 edgeboard (m)":17,"LVL 200 edgeboard (m)":23,"Star picket":5,"Plywood 1.8 x 1.2":40,
+    "LVL 4x3 timber (m)":7,"LVL 4x2 timber (m)":6,"LVL Bearer (m)":13,"H2 70x35 timber (m)":4,
+    "Props":65,"U-Jack":40,"1.8m Frame":120,"1.2m Frame":105,"1.8m Brace":23,"1.2m Brace":20,"Flat jack":36,"Frame connector":15,"300mm Frame extension":20,
+    "200 edgeboard base plate":18,"Fillet (m)":2,"Bondek (m²)":50,"Dincel 155 (m²)":115,"Dincel 200 (m²)":130,"Dincel 275 (m²)":210,"150mm pod":9,"225mm pod":11,"300mm pod":13,"Pod spacer":2,"Pod chair":1.5,"Ableflex (m)":3,
+    "PVC column former (m)":45,"Column clamp":12,"200 block":4.5,"Control joint (m)":6,"Coil tie":1.2},
+  machine_hire_data:{"1.6T excavator — daily ($/day)":40,"1.6T excavator — weekly ($/day)":40,"1.6T excavator — float (each way)":0,
+    "5T excavator — daily ($/day)":400,"5T excavator — weekly ($/day)":300,"5T excavator — float (each way)":300,
+    "Bobcat — daily ($/day)":350,"Bobcat — weekly ($/day)":300,"Bobcat — float (each way)":250,
+    "Rock hammer ($/day)":150,"Auger ($/day)":150},
+  disposal_data:{"4m³ mixed skip":720,"6m³ mixed skip":980,"4m³ masonry skip":550,"6m³ masonry skip":700,
+    "Tipper mixed (6T)":650,"Bogie mixed (12T)":800,"Tipper masonry (6T)":500,"Bogie masonry (12T)":1050},
+  fill_data:{"Road base ($/m³)":130,"Blue metal 20mm ($/m³)":150,"Crusher dust ($/m³)":128,"Bedding sand ($/m³)":112,"Recycled road base ($/m³)":75}
+};
+const STEEL_MULT={"6mm":0.222,"8mm":0.395,"10mm":0.617,"11mm":0.753,"12mm":0.93,"16mm":1.649,"20mm":2.5772,"24mm":3.7111};
+const MESH_WEIGHTS={"SL72":3.2,"SL82":4.2,"SL92":5.2,"SL102":6.3};
+const MESH_DIA={"SL72":7,"SL82":8,"SL92":9,"SL102":10};
+const LIG_MULT={"10mm":0.68,"12mm":0.93,"16mm":1.649,"20mm":2.5772,"24mm":3.7111};
+const DEFAULT_AREABAND={a1:15,d1:2,a2:25,d2:4,a3:40,d3:5,a4:50,d4:6,topDays:7,topRef:60,topStep:15};
+const FILL_DENSITY={"Road base ($/m³)":1.6,"Blue metal 20mm ($/m³)":1.5,"Crusher dust ($/m³)":1.6,"Bedding sand ($/m³)":1.5,"Recycled road base ($/m³)":1.5};
+function fillDensity(mat){return FILL_DENSITY[mat]||1.6;}
+
+let state={
+  job:{}, q:{markup:40,addcost:0,adj:0,gst:10,notes:'',charge:{concrete:true,pump:true,steel:true,formwork:true,labour:true,machine:true,disposal:true,fill:true}},
+  settings:{labourPercent:80,manDayRate:650,spillage:10,lapFactor:1.25,stockLength:6,lapLength:0.5,meshSheet:11.8,chairsPerM2:4,
+    newFormworkPct:30,picketSpacing:1.0,edgeThreshold:150,joistSpacing:0.45,bearerSpacing:0.9,propGrid:1.2,plyWaste:1.2,
+    cantPropGrid:0.9,cantLabourMdPerM2:0.15,backpropFactor:2,
+    soilDensity:1.8,swellFactor:1.25,digProductivity:40,breakProductivity:18,hammerFactor:0.35,
+    areaBand:Object.assign({},DEFAULT_AREABAND)},
+  prices:JSON.parse(JSON.stringify(DEFAULT_PRICES)), pours:[]
+};
+const LS_KEY='reset_quoter_v3';
+let uid=1; const nextId=()=>uid++;
+function saveState(){collectJob();try{localStorage.setItem(LS_KEY,JSON.stringify(state));}catch(e){}}
+function loadState(){try{const r=localStorage.getItem(LS_KEY);if(r){const s=JSON.parse(r);
+  state.job=s.job||{};state.q=Object.assign(state.q,s.q||{});state.q.charge=Object.assign({concrete:true,pump:true,steel:true,formwork:true,labour:true,machine:true,disposal:true,fill:true},(s.q&&s.q.charge)||{});state.settings=Object.assign(state.settings,s.settings||{});state.settings.areaBand=Object.assign({},DEFAULT_AREABAND,state.settings.areaBand||{});
+  state.prices=s.prices||state.prices;['formwork_data','machine_hire_data','disposal_data','fill_data'].forEach(cat=>{if(!state.prices[cat])state.prices[cat]={};Object.keys(DEFAULT_PRICES[cat]).forEach(k=>{if(state.prices[cat][k]==null)state.prices[cat][k]=DEFAULT_PRICES[cat][k];});});state.pours=s.pours||[];
+  state.pours.forEach(p=>(p.elements||[]).forEach(e=>{if(e.type==='slab'&&!e.slabType){e.slabType=e.slabClass||'ground';if(e.podHeight==null)e.podHeight=225;}}));}}catch(e){}}
+const $=id=>document.getElementById(id);
+const fmt=n=>'$'+(Math.round((n||0)*100)/100).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2});
+const num=v=>{const f=parseFloat(v);return isNaN(f)?0:f;};
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1800);}
+function escapeHtml(s){return String(s==null?'':s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
+function escapeAttr(s){return escapeHtml(s).replace(/'/g,'&#39;');}
+function round5(n){return 5*Math.round(n/5);}
+function round50(n){return 50*Math.round(n/50);}
+function showTab(name){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$('tab-'+name).classList.add('active');
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));window.scrollTo(0,0);}
+function collectJob(){
+  state.job={client:$('j_client').value,site:$('j_site').value,number:$('j_number').value,date:$('j_date').value,contact:$('j_contact').value,desc:$('j_desc').value};
+  state.q.markup=num($('q_markup').value);state.q.addcost=num($('q_addcost').value);state.q.adj=num($('q_adj').value);state.q.gst=num($('q_gst').value);state.q.notes=$('q_notes').value;
+}
+function fillJob(){const j=state.job||{};
+  $('j_client').value=j.client||'';$('j_site').value=j.site||'';$('j_number').value=j.number||'';
+  $('j_date').value=j.date||new Date().toISOString().slice(0,10);$('j_contact').value=j.contact||'';$('j_desc').value=j.desc||'';
+  $('q_markup').value=state.q.markup;$('q_addcost').value=state.q.addcost;$('q_adj').value=state.q.adj;$('q_gst').value=state.q.gst;$('q_notes').value=state.q.notes||'';
+  $('s_labourpct').value=state.settings.labourPercent;$('s_manday').value=state.settings.manDayRate;$('s_spill').value=state.settings.spillage;$('s_lap').value=state.settings.lapFactor;
+  $('s_stock').value=state.settings.stockLength;$('s_laplen').value=state.settings.lapLength;$('s_mesh').value=state.settings.meshSheet;$('s_chairs').value=state.settings.chairsPerM2;
+  $('s_newfw').value=state.settings.newFormworkPct;$('s_picket').value=state.settings.picketSpacing;$('s_edge').value=state.settings.edgeThreshold;
+  $('s_joist').value=state.settings.joistSpacing;$('s_bearer').value=state.settings.bearerSpacing;$('s_propgrid').value=state.settings.propGrid;
+  $('s_cantgrid').value=state.settings.cantPropGrid;$('s_cantlab').value=state.settings.cantLabourMdPerM2;$('s_backprop').value=state.settings.backpropFactor;
+}
+function editSetting(k,v){state.settings[k]=num(v);renderPours();recalc();saveState();}
+const BAND_FIELDS=[['a1','Band 1 — up to m²'],['d1','Band 1 — man-days'],['a2','Band 2 — up to m²'],['d2','Band 2 — man-days'],['a3','Band 3 — up to m²'],['d3','Band 3 — man-days'],['a4','Band 4 — up to m²'],['d4','Band 4 — man-days'],['topDays','Above — base days'],['topRef','Above — from m²'],['topStep','Above — +1 day per extra m²']];
+function bandVal(k){const B=state.settings.areaBand||{};return B[k]!=null?B[k]:DEFAULT_AREABAND[k];}
+function renderBandEditor(){const w=$('bandEditor');if(!w)return;
+  w.innerHTML=BAND_FIELDS.map(function(f){return '<div class="field"><label class="fld">'+f[1]+'</label><input class="num" type="number" step="any" value="'+bandVal(f[0])+'" onchange="editBand(\''+f[0]+'\',this.value)"><div class="hint">default '+DEFAULT_AREABAND[f[0]]+'</div></div>';}).join('');}
+function editBand(k,v){if(!state.settings.areaBand)state.settings.areaBand=Object.assign({},DEFAULT_AREABAND);state.settings.areaBand[k]=num(v);renderPours();recalc();saveState();}
+function resetAreaBand(){state.settings.areaBand=Object.assign({},DEFAULT_AREABAND);renderBandEditor();renderPours();recalc();saveState();toast('Labour bands reset to defaults');}
+function mixOptions(sel){return Object.keys(state.prices.concrete_mixes_data).sort().map(m=>'<option '+(m===sel?'selected':'')+'>'+m+'</option>').join('');}
+function tonnage(){return num(state.prices.steel_data.Tonnage);}
+
+/* ---------- POURS ---------- */
+function addPour(){state.pours.push({id:nextId(),name:'Pour '+(state.pours.length+1),mix:'32/20/80',pump:false,pumpCost:1300,
+  labourMode:'area',labourPct:null,labourMen:3,labourDays:1,extraConc:0,extraSteel:0,elements:[]});renderPours();recalc();saveState();}
+function removePour(pid){if(!confirm('Remove this pour and its elements?'))return;state.pours=state.pours.filter(p=>p.id!==pid);renderPours();recalc();saveState();}
+function editPour(pid,field,val,isNum){const p=state.pours.find(x=>x.id===pid);if(!p)return;p[field]=isNum?num(val):val;renderPours();recalc();saveState();}
+
+function addElement(pid,type){const p=state.pours.find(x=>x.id===pid);if(!p)return;const n=p.elements.filter(e=>e.type===type).length+1;
+  if(type==='slab')p.elements.push({id:nextId(),type:'slab',label:'Slab '+n,thickness:200,topCover:50,botCover:50,slabType:'ground',podHeight:225,class2:false,fromGround:2.4,labMen:0,labDays:0,
+    topType:'rebar',topBar:'12mm',topSpacing:200,topMesh:'SL92',botType:'rebar',botBar:'12mm',botSpacing:200,botMesh:'SL92',ew:true,edgeBar:true,edgeBarDia:'12mm',corners:4,reentrants:0,
+    shape:[{id:nextId(),x:0,y:0,w:20,l:10,kind:'add'}],additions:[]});
+  else if(type==='stairs')p.elements.push({id:nextId(),type:'stairs',label:'Stairs '+n,width:1.1,risers:13,riserHeight:190,going:250,throat:170,bar:'12mm',spacing:200,tb:true,labMen:0,labDays:0});
+  else if(type==='footing')p.elements.push({id:nextId(),type:'footing',label:'Footing '+n,fwidth:450,fheight:600,flength:10,sideCover:40,botCover:60,topCover:40,strip:true,bar:'16mm',bars:3,tb:true,ligs:true,ligDia:'12mm',ligSpacing:300,starters:false,starterDia:'16mm',starterSpacing:300,starterLength:1500,suspended:false,class2:false,soffitHeight:2.4,labMen:0,labDays:0});
+  else if(type==='pile')p.elements.push({id:nextId(),type:'pile',label:'Pile '+n,count:80,depth:3,dia:450,reinforced:true,bars:4,barDia:'16mm',ligDia:'10mm',ligSpacing:600,labMen:0,labDays:0});
+  else if(type==='column')p.elements.push({id:nextId(),type:'column',label:'Column '+n,count:4,height:3,shape:'round',dia:450,cwidth:400,cdepth:400,reinforced:true,bars:6,barDia:'20mm',ligDia:'10mm',ligSpacing:200,class2:false,labMen:0,labDays:0});
+  else if(type==='wall')p.elements.push({id:nextId(),type:'wall',label:'Wall '+n,length:10,height:3,thickness:200,system:'conventional',pvcProfile:200,reinforced:true,barDia:'12mm',vSpacing:200,hSpacing:200,faces:2,class2:false,coreFill:0.5,labMen:0,labDays:0});
+  else if(type==='kerb')p.elements.push({id:nextId(),type:'kerb',label:'Kerb '+n,kerbLength:20,laybackLength:0,volPerM:0.06,bars:2,barDia:'12mm',labMen:0,labDays:0});
+  else if(type==='excavation')p.elements.push({id:nextId(),type:'excavation',label:'Excavation '+n,
+    soil:true,
+    digs:[{id:nextId(),mode:'trench',w:450,d:600,l:20,qty:1,area:0,depth:200,count:0,dia:450,pdepth:3,vol:0}],
+    removal:true, reuseMode:'pct',reusePct:0,reuseVol:0,
+    autoDays:true,hireDays:1,prodOverride:'',
+    machines:[{id:nextId(),type:'5T',on:true,basis:'day',autoDays:true,days:'',floatTrips:2,hammer:false,hammerDays:'',auger:false,augerDays:''}],
+    crew:1, labourUnit:'auto',labourVal:'',
+    disposalMethod:'bogie',dispQtyOverride:'', imports:[], labMen:0,labDays:0});
+  renderPours();recalc();saveState();}
+function excDigs(e){if(e.digs&&e.digs.length)return e.digs;
+  // migrate legacy single-source excavation to a dig line
+  const m=e.volMode||'trench';const d={id:nextId(),mode:m,w:e.twidth||450,d:e.tdepth||600,l:e.tlength||20,qty:e.tcount||1,area:e.area||0,depth:e.digDepth||200,count:e.pcount||0,dia:e.pdia||450,pdepth:e.pdepth||3,vol:e.manualVol||0};
+  e.digs=[d];return e.digs;}
+function digVol(d){const q=num(d.qty)||1;
+  if(d.mode==='area')return num(d.area)*num(d.depth)/1000*q;
+  if(d.mode==='pier')return num(d.count)*Math.PI/4*Math.pow(num(d.dia)/1000,2)*num(d.pdepth)*q;
+  if(d.mode==='manual')return num(d.vol)*q;
+  return (num(d.w)/1000)*(num(d.d)/1000)*num(d.l)*q; // trench
+}
+function digDesc(d){const q=num(d.qty)||1;const qp=q>1?q+' × ':'';
+  if(d.mode==='area')return qp+num(d.area)+'m² × '+num(d.depth)+'mm';
+  if(d.mode==='pier')return num(d.count)+' × '+num(d.dia)+'mm\u2300 × '+num(d.pdepth)+'m';
+  if(d.mode==='manual')return qp+num(d.vol)+' m³';
+  return qp+num(d.w)+'×'+num(d.d)+'mm × '+num(d.l)+'m';
+}
+function addDig(pid,eid){const e=findEl(pid,eid);excDigs(e).push({id:nextId(),mode:'trench',w:450,d:600,l:10,qty:1,area:0,depth:200,count:0,dia:450,pdepth:3,vol:0});renderPours();recalc();saveState();}
+function removeDig(pid,eid,did){const e=findEl(pid,eid);if(e.digs.length<=1){toast('Keep at least one dig line');return;}e.digs=e.digs.filter(x=>x.id!==did);renderPours();recalc();saveState();}
+function editDig(pid,eid,did,field,val,isNum){const e=findEl(pid,eid);const d=excDigs(e).find(x=>x.id===did);if(!d)return;d[field]=isNum?num(val):val;renderPours();recalc();saveState();}
+function excMachines(e){if(e.machines&&e.machines.length)return e.machines;
+  // migrate legacy single-machine excavation
+  e.machines=[{id:nextId(),type:e.machine||'5T',on:e.machineOn!==false,basis:e.hireBasis||'day',autoDays:e.autoDays!==false,days:(e.autoDays===false?(e.hireDays||''):''),floatTrips:(e.floatTrips!=null?e.floatTrips:2),hammer:!!e.hammer,hammerDays:e.hammerDays||'',auger:!!e.auger,augerDays:e.augerDays||''}];
+  return e.machines;}
+function addMachine(pid,eid,type){const e=findEl(pid,eid);const flt=(type==='1.6T')?0:2;excMachines(e).push({id:nextId(),type:type||'5T',on:true,basis:'day',autoDays:true,days:'',floatTrips:flt,hammer:false,hammerDays:'',auger:false,augerDays:''});renderPours();recalc();saveState();}
+function removeMachine(pid,eid,mid){const e=findEl(pid,eid);e.machines=excMachines(e).filter(x=>x.id!==mid);renderPours();recalc();saveState();}
+function editMachine(pid,eid,mid,field,val,kind){const e=findEl(pid,eid);const m=excMachines(e).find(x=>x.id===mid);if(!m)return;m[field]=(kind==='num')?num(val):(kind==='bool')?(val===true||val==='true'):val;renderPours();recalc();saveState();}
+function excImports(e){if(!e.imports)e.imports=[];return e.imports;}
+function fillOptions(sel){return Object.keys(state.prices.fill_data||{}).map(k=>'<option'+(k===sel?' selected':'')+'>'+k+'</option>').join('');}
+function addImport(pid,eid){const e=findEl(pid,eid);const first=Object.keys(state.prices.fill_data||{})[0]||'';excImports(e).push({id:nextId(),mat:first,vol:0,density:fillDensity(first)});renderPours();recalc();saveState();}
+function removeImport(pid,eid,iid){const e=findEl(pid,eid);e.imports=excImports(e).filter(x=>x.id!==iid);renderPours();recalc();saveState();}
+function editImport(pid,eid,iid,field,val,isNum){const e=findEl(pid,eid);const im=excImports(e).find(x=>x.id===iid);if(!im)return;im[field]=isNum?num(val):val;if(field==='mat')im.density=fillDensity(val);renderPours();recalc();saveState();}
+function removeElement(pid,eid){const p=state.pours.find(x=>x.id===pid);if(!p)return;p.elements=p.elements.filter(e=>e.id!==eid);renderPours();recalc();saveState();}
+function editElement(pid,eid,field,val,isNum){const e=findEl(pid,eid);if(!e)return;e[field]=isNum?num(val):val;renderPours();recalc();saveState();}
+function findEl(pid,eid){const p=state.pours.find(x=>x.id===pid);return p?p.elements.find(x=>x.id===eid):null;}
+
+/* ---------- SHAPE (rectangles → raster) ---------- */
+function addRect(pid,eid,kind){const e=findEl(pid,eid);const bx=Math.max(0,...e.shape.map(r=>r.x+r.w));
+  e.shape.push({id:nextId(),x:(kind==='add'||kind==='cant')?bx:0,y:0,w:kind==='add'?5:(kind==='cant'?1:2),l:kind==='add'?5:(kind==='cant'?20:2),kind});renderPours();recalc();saveState();}
+function removeRect(pid,eid,rid){const e=findEl(pid,eid);if(e.shape.filter(r=>r.kind==='add').length<=1){const r=e.shape.find(x=>x.id===rid);if(r&&r.kind==='add'){toast('Keep at least one slab rectangle');return;}}e.shape=e.shape.filter(r=>r.id!==rid);renderPours();recalc();saveState();}
+function editRect(pid,eid,rid,field,val){const e=findEl(pid,eid);const r=e.shape.find(x=>x.id===rid);if(!r)return;r[field]=(field==='kind')?val:num(val);renderPours();recalc();saveState();}
+function setSlabArea(pid,eid,val){const e=findEl(pid,eid);const a=num(val);if(a<=0){toast('Enter a positive m²');return;}
+  const side=Math.round(Math.sqrt(a)*100)/100;
+  e.shape=[{id:nextId(),x:0,y:0,w:side,l:side,kind:'add'}];renderPours();recalc();saveState();}
+
+function shapeBounds(shape){let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  shape.forEach(r=>{minX=Math.min(minX,r.x);minY=Math.min(minY,r.y);maxX=Math.max(maxX,r.x+r.w);maxY=Math.max(maxY,r.y+r.l);});
+  if(!isFinite(minX))return{minX:0,minY:0,maxX:1,maxY:1};return{minX,minY,maxX,maxY};}
+function rasterize(shape,res){res=res||0.1;const b=shapeBounds(shape);
+  const cols=Math.max(1,Math.round((b.maxX-b.minX)/res)),rows=Math.max(1,Math.round((b.maxY-b.minY)/res));
+  const grid=new Uint8Array(cols*rows);
+  function fill(r,v){const x0=Math.round((r.x-b.minX)/res),y0=Math.round((r.y-b.minY)/res),x1=Math.round((r.x+r.w-b.minX)/res),y1=Math.round((r.y+r.l-b.minY)/res);
+    for(let yy=y0;yy<y1;yy++)for(let xx=x0;xx<x1;xx++)if(xx>=0&&yy>=0&&xx<cols&&yy<rows)grid[yy*cols+xx]=v;}
+  shape.filter(r=>r.kind==='add'||r.kind==='cant').forEach(r=>fill(r,1));
+  shape.filter(r=>r.kind==='cut').forEach(r=>fill(r,0));
+  return{grid,cols,rows,res,b};}
+function cantAreaOf(shape){const res=0.1;const b=shapeBounds(shape);
+  const cols=Math.max(1,Math.round((b.maxX-b.minX)/res)),rows=Math.max(1,Math.round((b.maxY-b.minY)/res));const grid=new Uint8Array(cols*rows);
+  function fill(r,v){const x0=Math.round((r.x-b.minX)/res),y0=Math.round((r.y-b.minY)/res),x1=Math.round((r.x+r.w-b.minX)/res),y1=Math.round((r.y+r.l-b.minY)/res);
+    for(let yy=y0;yy<y1;yy++)for(let xx=x0;xx<x1;xx++)if(xx>=0&&yy>=0&&xx<cols&&yy<rows)grid[yy*cols+xx]=v;}
+  shape.filter(r=>r.kind==='cant').forEach(r=>fill(r,1));shape.filter(r=>r.kind==='cut').forEach(r=>fill(r,0));
+  let a=0;for(let i=0;i<grid.length;i++)a+=grid[i];return a*res*res;}
+function shapeAreaPerim(rz){let area=0,perim=0;const{grid,cols,rows,res}=rz;
+  for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){if(grid[y*cols+x]){area++;
+    if(x===0||!grid[y*cols+x-1])perim++;if(x===cols-1||!grid[y*cols+x+1])perim++;
+    if(y===0||!grid[(y-1)*cols+x])perim++;if(y===rows-1||!grid[(y+1)*cols+x])perim++;}}
+  return{area:area*res*res,perimeter:perim*res};}
+function barScan(rz,spacingMm,dir){const step=Math.max(1,Math.round((spacingMm/1000)/rz.res));let count=0,cells=0;
+  if(dir==='x'){for(let y=Math.floor(step/2);y<rz.rows;y+=step){let run=0;for(let x=0;x<rz.cols;x++)if(rz.grid[y*rz.cols+x])run++;if(run){count++;cells+=run;}}}
+  else{for(let x=Math.floor(step/2);x<rz.cols;x+=step){let run=0;for(let y=0;y<rz.rows;y++)if(rz.grid[y*rz.cols+x])run++;if(run){count++;cells+=run;}}}
+  return{count,lineal:cells*rz.res};}
+function barsToBuy(runs){const stock=state.settings.stockLength,lap=state.settings.lapLength;let lineal=0;
+  runs.forEach(r=>{let per=r.len;if(r.len>stock){const j=Math.ceil(r.len/stock)-1;per=r.len+j*lap;}lineal+=per*r.count;});
+  return{lineal,bars:Math.ceil(lineal/stock)};}
+function pickChairByRange(val,prefix){const data=state.prices.steel_additions_data;const opts=[];
+  Object.keys(data).forEach(k=>{if(k.indexOf(prefix)===0){const parts=k.split(' ');if(parts.length>1){const nums=parts[1].split('/').map(x=>parseInt(x)).filter(x=>!isNaN(x));if(nums.length)opts.push({k,lo:Math.min(...nums),hi:Math.max(...nums)});}}});
+  let valid=opts.filter(o=>val>=o.lo&&val<=o.hi);if(valid.length)return valid.sort((a,b)=>a.lo-b.lo)[0].k;
+  if(opts.length)return opts.sort((a,b)=>Math.abs(a.lo-val)-Math.abs(b.lo-val))[0].k;return null;}
+function chairPackSize(code){const m=code.match(/(\d+)\s*$/);return m?parseInt(m[1]):100;}
+
+/* ---------- ADDITIONS ---------- */
+function addAddition(pid,eid,type){const e=findEl(pid,eid);
+  const base={id:nextId(),type,class2:false,labMen:0,labDays:0};
+  if(type==='setdown')Object.assign(base,{area:5,depth:100,updown:'Down',perimeter:9,zbar:false,zdia:'12mm',zspacing:200});
+  else if(type==='fold')Object.assign(base,{length:5,width:300,soffit:0,topSetdown:300,eachFace:false,zbar:true,zdia:'12mm',zspacing:200,deep:false,foldBar:'12mm',foldSpacing:200});
+  else if(type==='hob')Object.assign(base,{length:5,height:150,width:150,lbarDia:'12mm',lbarSlabLeg:300,lbarSpacing:200,straightDia:'12mm',upturn:false,straightSpacing:200,eachFace:false});
+  else if(type==='rebate')Object.assign(base,{length:5,footingDepth:300,footingCover:50,footingDia:'12mm',footingLeg:200,zdia:'12mm',zspacing:200});
+  e.additions.push(base);renderPours();recalc();saveState();}
+function removeAddition(pid,eid,aid){const e=findEl(pid,eid);e.additions=e.additions.filter(a=>a.id!==aid);renderPours();recalc();saveState();}
+function editAddition(pid,eid,aid,field,val,kind){const e=findEl(pid,eid);const a=e.additions.find(x=>x.id===aid);if(!a)return;
+  a[field]=(kind==='num')?num(val):(kind==='bool')?val:val;renderPours();recalc();saveState();}
+
+/* ---------- SLAB CALC ---------- */
+function slabTopDia(e){return e.topType==='rebar'?parseFloat(e.topBar):(e.topType==='mesh'?(MESH_DIA[e.topMesh]||8):0);}
+function slabBotDia(e){return e.botType==='rebar'?parseFloat(e.botBar):(e.botType==='mesh'?(MESH_DIA[e.botMesh]||8):0);}
+function calcSlab(e){
+  const spill=1+state.settings.spillage/100,lap=state.settings.lapFactor,cpm=state.settings.chairsPerM2;
+  const rz=rasterize(e.shape);const ap=shapeAreaPerim(rz);const area=ap.area,perimeter=ap.perimeter;
+  const base=area*((e.thickness+(e.slabType==='wafflepod'?85:0))/1000);
+  const topDia=slabTopDia(e),botDia=slabBotDia(e);
+  // main steel weight (area based, their method)
+  function faceW(t,bar,sp,mesh){if(t==='mesh')return area*(MESH_WEIGHTS[mesh]||0)/1000;
+    if(t==='rebar'&&sp>0){const bpm=1000/sp,ew=e.ew?2:1;return area*(bpm*ew*(STEEL_MULT[bar]||0))/1000;}return 0;}
+  const topW=faceW(e.topType,e.topBar,e.topSpacing,e.topMesh),botW=faceW(e.botType,e.botBar,e.botSpacing,e.botMesh);
+  const continuous=topW+botW,mainLap=continuous*lap;
+  // main bars buy list
+  let buy=[],parts=[];
+  function faceBuy(tag,t,bar,sp,mesh){if(t==='mesh'){const sheets=Math.ceil(area*1.1/state.settings.meshSheet);buy.push(tag+': '+sheets+' × '+mesh+' sheets');parts.push({g:'Reinforcement',k:mesh+' mesh',q:sheets,u:'sheet',c:sheets*num(state.prices.steel_data[mesh])});}
+    else if(t==='rebar'&&sp>0){const rx=barScan(rz,sp,'x');const runs=[{count:rx.count,len:rx.lineal/Math.max(rx.count,1)}];
+      const faceTonnes=faceW(t,bar,sp,mesh)*lap;
+      if(e.ew){const ry=barScan(rz,sp,'y');const b2=barsToBuy([{count:ry.count,len:ry.lineal/Math.max(ry.count,1)}]);const b1=barsToBuy(runs);
+        buy.push(tag+': '+(b1.bars+b2.bars)+' × '+bar+' bars ('+(rx.lineal+ry.lineal).toFixed(0)+'m EW)');parts.push({g:'Reinforcement',k:bar+' bar (stock '+state.settings.stockLength+'m)',q:b1.bars+b2.bars,u:'bar',c:faceTonnes*tonnage()});}
+      else{const b1=barsToBuy(runs);buy.push(tag+': '+b1.bars+' × '+bar+' bars ('+rx.lineal.toFixed(0)+'m)');parts.push({g:'Reinforcement',k:bar+' bar (stock '+state.settings.stockLength+'m)',q:b1.bars,u:'bar',c:faceTonnes*tonnage()});}}}
+  faceBuy('Top',e.topType,e.topBar,e.topSpacing,e.topMesh);
+  faceBuy('Bottom',e.botType,e.botBar,e.botSpacing,e.botMesh);
+  // additions: volume + steel + z-bars, each tagged to its own section
+  let addVol=0,addSteel=0,setdownAreaTotal=0;let addLines=[];let concSections=[];
+  e.additions.forEach(a=>{
+    const secName=e.label+' · '+(ADD_NAMES[a.type]||a.type);let aw=0,av=0;
+    if(a.type==='setdown'){const v=a.area*(a.depth/1000);av=(a.updown==='Down'?-v:v);setdownAreaTotal+=a.area;
+      if(a.zbar){const emb=round50(parseFloat(a.zdia)*50);let depth=round5(e.thickness-e.topCover-e.botCover-topDia-botDia);const bl=(emb*2+depth)/1000;
+        const nb=Math.ceil(a.perimeter*1000/a.zspacing);aw+=nb*bl*(STEEL_MULT[a.zdia]||0)/1000;addLines.push('Setdown Z-bars: '+nb+' × '+a.zdia+' ('+emb+'×'+depth+'×'+emb+'mm)');}}
+    else if(a.type==='fold'){const eff=Math.max(a.soffit,a.topSetdown);const extra=Math.max(eff-e.thickness,0);av=(extra/1000)*(a.width/1000)*a.length;
+      if(a.zbar){const emb=round50(parseFloat(a.zdia)*50);let depth=round5(e.thickness+a.soffit-e.topCover-e.botCover-topDia-botDia);const bl=(emb*2+depth)/1000;
+        let nb=Math.ceil(a.length*1000/a.zspacing);if(a.eachFace)nb*=2;aw+=nb*bl*(STEEL_MULT[a.zdia]||0)/1000;addLines.push('Fold Z-bars: '+nb+' × '+a.zdia);}
+      if(a.deep){const nb=Math.ceil(eff/a.foldSpacing);const tl=nb*a.length*1.25;aw+=tl*(STEEL_MULT[a.foldBar]||0)/1000;addLines.push('Deep-fold bars: '+nb+' × '+a.foldBar+' @ '+a.length.toFixed(1)+'m');}}
+    else if(a.type==='hob'){av=(a.height/1000)*(a.width/1000)*a.length;
+      let hobLeg=Math.floor((a.height+topDia)/10)*10;let nL=Math.ceil(a.length*1000/a.lbarSpacing);let nS=a.upturn?Math.ceil(a.height/a.straightSpacing):1;
+      if(a.eachFace){nL*=2;nS*=2;}const Ll=nL*(hobLeg+a.lbarSlabLeg)/1000;const Sl=nS*(a.length*1.25);
+      aw+=Ll*(STEEL_MULT[a.lbarDia]||0)/1000+Sl*(STEEL_MULT[a.straightDia]||0)/1000;
+      addLines.push('Hob: '+nL+' × '+a.lbarDia+' L-bars ('+hobLeg+'+'+a.lbarSlabLeg+'mm) + '+nS+' × '+a.straightDia+' straight');}
+    else if(a.type==='rebate'){const emb=round50(parseFloat(a.zdia)*50);let depth=round5(a.footingDepth-a.footingCover-parseFloat(a.footingDia)-e.topCover-topDia);
+      const bl=(a.footingLeg+emb+depth)/1000;const nb=Math.ceil(a.length*1000/a.zspacing);aw+=nb*bl*(STEEL_MULT[a.zdia]||0)/1000;
+      addLines.push('Rebate Z-bars: '+nb+' × '+a.zdia+' ('+a.footingLeg+'+'+emb+'+'+depth+'mm)');}
+    addVol+=av;addSteel+=aw;
+    if(aw>0)parts.push({g:'Reinforcement',k:'Rebar — '+(ADD_NAMES[a.type]||a.type),q:Math.round(aw*1000),u:'kg',c:aw*tonnage(),sec:secName});
+    if(av!==0)concSections.push({sec:secName,vol:av*spill});
+  });
+  const volume=(base+addVol)*spill;
+  if(e.edgeBar){ // perimeter edge bar + corner bars + trimmers (ported from the file)
+    const em=STEEL_MULT[e.edgeBarDia||'12mm']||0;
+    const perimLineal=perimeter*1.2;
+    const cornerBars=((e.corners||0)+(e.reentrants||0))*2,trimmers=(e.reentrants||0)*2;
+    const cornerLineal=(cornerBars+trimmers)*1.5;
+    const edgeT=(perimLineal+cornerLineal)*em/1000;addSteel+=edgeT;
+    addLines.push('Perimeter bar: '+Math.ceil(perimLineal)+'m '+(e.edgeBarDia||'12mm')+(cornerBars?' + '+cornerBars+' corner bars':'')+(trimmers?' + '+trimmers+' trimmers':''));
+    parts.push({g:'Reinforcement',k:(e.edgeBarDia||'12mm')+' bar (edge/perimeter, stock '+state.settings.stockLength+'m)',q:Math.ceil((perimLineal+cornerLineal)/state.settings.stockLength),u:'bar',c:edgeT*tonnage(),sec:e.label});
+  }
+  const steelWeight=mainLap+addSteel;
+  const steelCost=steelWeight*tonnage();
+  // chairs: bottom on full area; top on (area - setdown areas) + per setdown at reduced thickness
+  const prefix=(e.slabType==='suspended'||e.slabType==='bondek')?'SS':'SOG';
+  const botChair=pickChairByRange(e.botCover,prefix);
+  const topH=e.thickness-e.topCover-topDia*(e.ew?2:1);
+  const topChair=pickChairByRange(topH,prefix);
+  const botQty=Math.round(area*cpm);const topArea=Math.max(area-setdownAreaTotal,0);const topQty=Math.round(topArea*cpm);
+  let chairCost=0,chairLines=[];
+  function addChair(code,qty,tag){if(!code||qty<=0)return;const pack=chairPackSize(code);const packs=Math.ceil(qty/pack);chairCost+=packs*num(state.prices.steel_additions_data[code]);chairLines.push(tag+': '+qty+' = '+packs+' pk '+code);parts.push({g:'Reinforcement',k:code,q:packs,u:'pk',c:packs*num(state.prices.steel_additions_data[code])});}
+  addChair(botChair,botQty,'Bottom');addChair(topChair,topQty,'Top');
+  e.additions.filter(a=>a.type==='setdown').forEach(a=>{const th=a.updown==='Down'?e.thickness-a.depth:e.thickness+a.depth;const h=th-e.topCover-topDia*(e.ew?2:1);
+    const c=pickChairByRange(h,prefix);addChair(c,Math.round(a.area*cpm),'Setdown top');});
+  concSections.unshift({sec:e.label,vol:base*spill});
+  return{area,perimeter,base,addVol,volume,topW,botW,mainLap,addSteel,steelWeight,steelCost,chairCost,buy,addLines,chairLines,topH,parts,concSections};
+}
+
+/* ---------- STAIRS ---------- */
+function calcStairs(e){const spill=1+state.settings.spillage/100,cpm=state.settings.chairsPerM2;
+  const goings=Math.max(e.risers-1,1);const totalRise=e.risers*e.riserHeight/1000,totalGoing=goings*e.going/1000;
+  const slope=Math.sqrt(totalRise*totalRise+totalGoing*totalGoing);
+  const waistArea=slope*(e.throat/1000);const stepArea=goings*0.5*(e.going/1000)*(e.riserHeight/1000);
+  const volume=(waistArea+stepArea)*e.width*spill;
+  const mult=STEEL_MULT[e.bar]||0,layers=e.tb?2:1;
+  const upCount=Math.floor(e.width*1000/e.spacing)+1,upLen=slope+0.5;
+  const acrossCount=Math.floor(slope*1000/e.spacing)+1,acrossLen=e.width+0.2;
+  const b=barsToBuy([{count:upCount*layers,len:upLen},{count:acrossCount*layers,len:acrossLen}]);
+  const steelWeight=b.lineal*mult/1000;const steelCost=steelWeight*tonnage();
+  const chairQty=Math.round(e.width*slope*cpm);const botChair=pickChairByRange(40,'SS');
+  let chairCost=0,chairLines=[],parts=[];if(botChair){const pack=chairPackSize(botChair);const packs=Math.ceil(chairQty/pack);chairCost+=packs*num(state.prices.steel_additions_data[botChair]);chairLines.push(chairQty+' = '+packs+' pk '+botChair);parts.push({g:'Reinforcement',k:botChair,q:packs,u:'pk',c:packs*num(state.prices.steel_additions_data[botChair])});}
+  const buy=[b.bars+' × '+e.bar+' bars ('+b.lineal.toFixed(0)+'m, '+(e.tb?'T&B':'single')+')'];
+  parts.push({g:'Reinforcement',k:e.bar+' bar (stock '+state.settings.stockLength+'m)',q:b.bars,u:'bar',c:steelCost});
+  return{volume,slope,steelWeight,steelCost,chairCost,buy,chairLines,upCount,acrossCount,parts,concSections:[{sec:e.label,vol:volume}]};}
+
+/* ---------- FOOTING ---------- */
+function calcFooting(e){const spill=1+state.settings.spillage/100;
+  const volume=(e.fwidth/1000)*(e.fheight/1000)*e.flength*spill;
+  const totBarsW=e.bars*(e.tb?2:1);const trenchLineal=barsToBuy([{count:totBarsW,len:e.flength}]).lineal;const trenchWeight=trenchLineal*(STEEL_MULT[e.bar]||0)/1000;
+  let ligWeight=0,numLigs=0,ligSingle=0,ligW=0,ligH=0;
+  if(e.ligs){ligW=5*Math.floor((e.fwidth-2*e.sideCover)/5);const barB=parseFloat(e.bar),barT=e.tb?parseFloat(e.bar):0;
+    ligH=e.strip?5*Math.floor((e.fheight-e.botCover-barB-e.topCover-barT)/5):5*Math.floor((e.fheight-e.botCover-barB-(e.tb?barT:0))/5);
+    ligSingle=(2*(ligW+ligH)+280)/1000;numLigs=Math.floor(e.flength/(e.ligSpacing/1000))+1;ligWeight=ligSingle*numLigs*(LIG_MULT[e.ligDia]||0)/1000;}
+  let starterWeight=0,numStarters=0;if(e.starters){numStarters=Math.floor(e.flength/(e.starterSpacing/1000))+1;starterWeight=numStarters*(e.starterLength/1000)*(STEEL_MULT[e.starterDia]||0)/1000;}
+  const steelWeight=(trenchWeight+ligWeight+starterWeight)*1.1;const steelCost=steelWeight*tonnage();
+  const prefix=e.suspended?'SS':'SOG';const chairsNeeded=Math.ceil(e.flength*4);const chairCode=pickChairByRange(e.botCover,prefix);
+  let chairCost=0,chairLines=[],parts=[];const wf=1.1;
+  if(chairCode){const pack=chairPackSize(chairCode);const packs=Math.ceil(chairsNeeded/pack);chairCost+=packs*num(state.prices.steel_additions_data[chairCode]);chairLines.push(chairsNeeded+' = '+packs+' pk '+chairCode);parts.push({g:'Reinforcement',k:chairCode,q:packs,u:'pk',c:packs*num(state.prices.steel_additions_data[chairCode])});}
+  const totBars=e.bars*(e.tb?2:1);const mb=barsToBuy([{count:totBars,len:e.flength}]);
+  let buy=[totBars+' × '+e.bar+' main = '+mb.bars+' stock ('+mb.lineal.toFixed(0)+'m'+(e.tb?', T&B':'')+')'];
+  parts.push({g:'Reinforcement',k:e.bar+' bar (stock '+state.settings.stockLength+'m)',q:mb.bars,u:'bar',c:trenchWeight*wf*tonnage()});
+  if(e.ligs){const lb=barsToBuy([{count:numLigs,len:ligSingle}]);buy.push(numLigs+' × '+e.ligDia+' ligs @'+e.ligSpacing+' ('+ligW+'×'+ligH+'mm, '+lb.bars+' stock)');parts.push({g:'Reinforcement',k:e.ligDia+' ligatures',q:numLigs,u:'ea',c:ligWeight*wf*tonnage()});}
+  if(e.starters){buy.push(numStarters+' × '+e.starterDia+' starters @'+e.starterSpacing+' × '+e.starterLength+'mm');parts.push({g:'Reinforcement',k:e.starterDia+' starters',q:numStarters,u:'ea',c:starterWeight*wf*tonnage()});}
+  return{volume,trenchWeight,ligWeight,starterWeight,steelWeight,steelCost,chairCost,buy,chairLines,numLigs,numStarters,ligW,ligH,parts,concSections:[{sec:e.label,vol:volume}]};}
+
+/* ---------- PILE / COLUMN / WALL ---------- */
+function circLigLen(dia){return Math.ceil((Math.PI*Math.max(dia-100,0)/1000+0.28)*10)/10;}
+function calcPile(e){
+  const spill=1+state.settings.spillage/100;const dm=e.dia/1000;
+  const volume=e.count*(Math.PI/4*dm*dm*e.depth)*spill;
+  let steelWeight=0,steelCost=0,buy=[e.count+' piles × '+e.depth+'m deep × '+e.dia+'mm \u00f8'],parts=[];
+  if(e.reinforced){
+    const vertT=e.count*e.bars*e.depth*(STEEL_MULT[e.barDia]||0)/1000;
+    const ligLen=circLigLen(e.dia),ligPer=Math.ceil(e.depth*1000/e.ligSpacing),ligCount=e.count*ligPer,ligT=ligCount*ligLen*(STEEL_MULT[e.ligDia]||0)/1000;
+    steelWeight=vertT+ligT;steelCost=steelWeight*tonnage();
+    buy.push('Cage: '+e.bars+' \u00d7 '+e.barDia+' verticals + '+e.ligDia+' ligs @'+e.ligSpacing+' ('+ligPer+'/pile)');
+    parts.push({g:'Reinforcement',k:e.barDia+' bar (pile verticals)',q:e.count*e.bars,u:'ea',c:vertT*tonnage()});
+    parts.push({g:'Reinforcement',k:e.ligDia+' ligs (pile)',q:ligCount,u:'ea',c:ligT*tonnage()});
+  } else buy.push('Mass concrete — no cage');
+  return{volume,steelWeight,steelCost,chairCost:0,buy,chairLines:[],parts,concSections:[{sec:e.label,vol:volume}]};
+}
+function calcColumn(e){
+  const spill=1+state.settings.spillage/100;const round=(e.shape==='round');
+  const perVol=round?(Math.PI/4*(e.dia/1000)*(e.dia/1000)*e.height):((e.cwidth/1000)*(e.cdepth/1000)*e.height);
+  const volume=e.count*perVol*spill;
+  let steelWeight=0,steelCost=0,buy=[e.count+' columns × '+e.height+'m ('+(round?e.dia+'mm \u00f8':e.cwidth+'\u00d7'+e.cdepth+'mm')+')'],parts=[];
+  if(e.reinforced){
+    const vertT=e.count*e.bars*e.height*(STEEL_MULT[e.barDia]||0)/1000;
+    const ligLen=round?circLigLen(e.dia):(2*((e.cwidth-80)+(e.cdepth-80))/1000+0.28);
+    const ligPer=Math.ceil(e.height*1000/e.ligSpacing),ligCount=e.count*ligPer,ligT=ligCount*ligLen*(STEEL_MULT[e.ligDia]||0)/1000;
+    steelWeight=vertT+ligT;steelCost=steelWeight*tonnage();
+    buy.push('Cage: '+e.bars+' \u00d7 '+e.barDia+' verticals + '+e.ligDia+' ligs @'+e.ligSpacing);
+    parts.push({g:'Reinforcement',k:e.barDia+' bar (column verticals)',q:e.count*e.bars,u:'ea',c:vertT*tonnage()});
+    parts.push({g:'Reinforcement',k:e.ligDia+' ligs (column)',q:ligCount,u:'ea',c:ligT*tonnage()});
+  }
+  return{volume,steelWeight,steelCost,chairCost:0,buy,chairLines:[],parts,concSections:[{sec:e.label,vol:volume}]};
+}
+function calcWall(e){
+  const spill=1+state.settings.spillage/100;const area=e.length*e.height;
+  const th=(e.system==='pvc')?(e.pvcProfile||200):e.thickness;
+  const solid=(e.system==='blockwork')?(e.coreFill||0.5):1;
+  const volume=e.length*e.height*(th/1000)*solid*spill;
+  let steelWeight=0,steelCost=0,buy=[e.length+'m × '+e.height+'m × '+th+'mm '+e.system+(e.system==='pvc'?' ('+(e.pvcProfile||200)+' profile)':'')+(e.system==='blockwork'?' (core-fill '+Math.round(solid*100)+'%)':'')],parts=[];
+  if(e.reinforced){
+    const verts=Math.ceil(e.length*1000/e.vSpacing)*e.height,horiz=Math.ceil(e.height*1000/e.hSpacing)*e.length;
+    const lineal=(verts+horiz)*(e.faces||1),t=lineal*(STEEL_MULT[e.barDia]||0)/1000;
+    steelWeight=t;steelCost=t*tonnage();
+    buy.push('Reo: '+e.barDia+' verts @'+e.vSpacing+' + horiz @'+e.hSpacing+((e.faces||1)>1?' ('+e.faces+' faces)':'')+' = '+lineal.toFixed(0)+'m');
+    parts.push({g:'Reinforcement',k:e.barDia+' bar (wall, stock '+state.settings.stockLength+'m)',q:Math.ceil(lineal/state.settings.stockLength),u:'bar',c:t*tonnage()});
+  }
+  return{volume,steelWeight,steelCost,chairCost:0,buy,chairLines:[],parts,concSections:[{sec:e.label,vol:volume}],area};
+}
+function calcKerb(e){
+  const spill=1+state.settings.spillage/100;const total=e.kerbLength+e.laybackLength;
+  const volume=total*(e.volPerM||0.06)*spill;
+  let parts=[],buy=[e.kerbLength+'m kerb'+(e.laybackLength?' + '+e.laybackLength+'m layback':'')];
+  const lineal=e.bars*total,t=lineal*(STEEL_MULT[e.barDia]||0)/1000,steelCost=t*tonnage();
+  buy.push('Reo: '+e.bars+' × '+e.barDia+' longitudinal ('+lineal.toFixed(0)+'m)');
+  parts.push({g:'Reinforcement',k:e.barDia+' bar (kerb, stock '+state.settings.stockLength+'m)',q:Math.ceil(lineal/state.settings.stockLength),u:'bar',c:t*tonnage()});
+  const chairQty=Math.ceil(total*4),chairCode=pickChairByRange(60,'SOG');let chairCost=0,chairLines=[];
+  if(chairCode){const pack=chairPackSize(chairCode),packs=Math.ceil(chairQty/pack);chairCost=packs*num(state.prices.steel_additions_data[chairCode]);chairLines.push(chairQty+' = '+packs+' pk '+chairCode);parts.push({g:'Reinforcement',k:chairCode,q:packs,u:'pk',c:chairCost});}
+  return{volume,steelWeight:t,steelCost,chairCost,buy,chairLines,parts,concSections:[{sec:e.label,vol:volume}]};
+}
+
+/* ---------- EXCAVATION ---------- */
+function mh(k){return num((state.prices.machine_hire_data||{})[k]);}
+function calcExcavation(e){
+  const S=state.settings;
+  const soilDensity=num(S.soilDensity)||1.8, concDensity=2.4, swell=num(S.swellFactor)||1.25;
+  const isSoil=e.soil!==false;
+  // ---- bank (in-ground) volume: sum of all dig lines ----
+  const digs=excDigs(e);
+  let bankVol=0, descParts=[];
+  digs.forEach(d=>{bankVol+=digVol(d);descParts.push(digDesc(d));});
+  const desc=descParts.join(' + ');
+  const density=isSoil?soilDensity:concDensity;
+  const parts=[],buy=[];
+  // ---- cut & fill: how much stays on site vs gets carted ----
+  const noRemoval=(e.removal===false);
+  let reused=0;
+  if(noRemoval)reused=bankVol;
+  else if(e.reuseMode==='vol')reused=Math.min(bankVol,num(e.reuseVol));
+  else reused=bankVol*Math.min(100,Math.max(0,num(e.reusePct)))/100;
+  const disposeVol=Math.max(0,bankVol-reused);
+  const looseVol=disposeVol*(isSoil?swell:1);
+  const weight=disposeVol*density;
+  // ---- job duration (drives labour + default machine days) ----
+  const anyHammer=excMachines(e).some(m=>m.hammer&&m.on!==false);
+  const baseProd=num(e.prodOverride)>0?num(e.prodOverride):(isSoil?(num(S.digProductivity)||40):(num(S.breakProductivity)||18));
+  const effProd=anyHammer?baseProd*(num(S.hammerFactor)||0.35):baseProd;
+  const computedDays=bankVol>0&&effProd>0?Math.max(1,Math.ceil(bankVol/effProd)):0;
+  const days=(e.autoDays===false)?(num(e.hireDays)||0):computedDays;
+  // ---- machine hire (list of machines, each with its own days/attachments) ----
+  const preOf=t=>t==='bobcat'?'Bobcat':(t==='1.6T'?'1.6T excavator':'5T excavator');
+  const machines=excMachines(e);let machineCost=0;const machineDetail=[];
+  machines.forEach(mm=>{
+    const pre=preOf(mm.type);
+    const daily=mh(pre+' — daily ($/day)'),weekly=mh(pre+' — weekly ($/day)'),floatEach=mh(pre+' — float (each way)');
+    const onWeek=mm.basis==='week';
+    const mDays=(mm.autoDays===false)?(num(mm.days)||0):days;
+    const hire=mDays*(onWeek?weekly:daily);
+    const flt=floatEach*(num(mm.floatTrips)||0);
+    const hamD=mm.hammer?((mm.hammerDays!=null&&mm.hammerDays!=='')?num(mm.hammerDays):mDays):0;
+    const augD=mm.auger?((mm.augerDays!=null&&mm.augerDays!=='')?num(mm.augerDays):mDays):0;
+    const ham=hamD*mh('Rock hammer ($/day)');
+    const aug=augD*mh('Auger ($/day)');
+    const on=mm.on!==false;
+    const c=on?(hire+flt+ham+aug):0;
+    machineCost+=c;
+    machineDetail.push({pre,type:mm.type,mDays,onWeek,hire,flt,ham,aug,hamD,augD,c,on,hammer:!!mm.hammer,auger:!!mm.auger,rate:onWeek?weekly:daily});
+    if(c>0){parts.push({g:'Machine',k:pre+(mm.hammer?' + hammer':'')+(mm.auger?' + auger':''),q:mDays,u:'day',c:c,sec:e.label});
+      buy.push(pre+' '+mDays+' day'+(mDays==1?'':'s')+' @ '+(onWeek?'weekly':'daily')+(flt?' + float ×'+(num(mm.floatTrips)||0):'')+(mm.hammer?' + hammer '+hamD+'d':'')+(mm.auger?' + auger '+augD+'d':''));}
+  });
+  // ---- disposal (skips / trucks), soil→mixed, concrete→masonry ----
+  let disposalCost=0,dispQty=0,dispKind='',dispUnit=0,dispAuto=0,dispCap=0;
+  if(!noRemoval && e.disposalMethod && e.disposalMethod!=='none' && weight>0){
+    const CAP={skip6:7,skip4:5,tipper:6,bogie:12};
+    let capKey,kindKey;
+    if(e.disposalMethod==='skip4'){capKey='skip4';kindKey=isSoil?'4m³ mixed skip':'4m³ masonry skip';}
+    else if(e.disposalMethod==='tipper'){capKey='tipper';kindKey=isSoil?'Tipper mixed (6T)':'Tipper masonry (6T)';}
+    else if(e.disposalMethod==='bogie'){capKey='bogie';kindKey=isSoil?'Bogie mixed (12T)':'Bogie masonry (12T)';}
+    else {capKey='skip6';kindKey=isSoil?'6m³ mixed skip':'6m³ masonry skip';}
+    dispCap=CAP[capKey];
+    dispAuto=Math.max(1,Math.ceil(weight/dispCap));
+    dispQty=(e.dispQtyOverride!=null&&e.dispQtyOverride!=='')?num(e.dispQtyOverride):dispAuto;
+    dispKind=kindKey;dispUnit=num((state.prices.disposal_data||{})[kindKey]);
+    disposalCost=dispQty*dispUnit;
+  }
+  // ---- import fill (road base, blue metal, sand, etc.) ----
+  let fillCost=0,fillTonnes=0;const imports=excImports(e);
+  imports.forEach(im=>{const v=num(im.vol);if(v<=0)return;const unit=num((state.prices.fill_data||{})[im.mat]);const c=v*unit;fillCost+=c;
+    const dens=num(im.density)>0?num(im.density):fillDensity(im.mat);const t=v*dens;fillTonnes+=t;
+    const nm=im.mat.replace(/ \(\$\/m³\)/,'');
+    parts.push({g:'Fill',k:nm+' (≈'+dens+' t/m³)',q:v,u:'m³',c:c,sec:e.label});buy.push('Import '+v.toFixed(2)+' m³ '+nm+' ≈ '+t.toFixed(1)+' t to order');});
+  // ---- labour: auto (days×crew), manual man-days, or manual man-hours ----
+  const crew=num(e.crew)||1;
+  let autoMd, labourNote;
+  if(e.labourUnit==='days'){autoMd=num(e.labourVal);labourNote=autoMd.toFixed(2)+' man-days (manual)';}
+  else if(e.labourUnit==='hours'){const hrs=num(e.labourVal);autoMd=hrs/8;labourNote=hrs+' man-hours = '+autoMd.toFixed(2)+' man-days';}
+  else {autoMd=days*crew;labourNote=days+' day'+(days==1?'':'s')+' × '+crew+' crew = '+autoMd.toFixed(2)+' man-days';}
+  // ---- summary buy lines ----
+  buy.unshift('Dig '+bankVol.toFixed(2)+' m³ ('+desc+')'+(reused>0?' — reuse '+reused.toFixed(2)+' m³ on site':'')+(noRemoval?' — no cartage':' — cart '+disposeVol.toFixed(2)+' m³ ('+weight.toFixed(1)+' t)'));
+  if(disposalCost>0){parts.push({g:'Disposal',k:dispKind,q:dispQty,u:'ea',c:disposalCost,sec:e.label});
+    buy.push(dispQty+' × '+dispKind);}
+  buy.push('Labour: '+labourNote);
+  return{volume:0,steelWeight:0,steelCost:0,chairCost:0,formworkCost:0,
+    bankVol,disposeVol,looseVol,weight,reused,noRemoval,isSoil,desc,density,
+    days,computedDays,effProd,crew,anyHammer,machineDetail,machineCost,labourNote,fillCost,fillTonnes,
+    disposalCost,dispQty,dispAuto,dispKind,dispUnit,dispCap,
+    otherCost:machineCost+disposalCost+fillCost,autoMd,
+    parts,buy,concSections:[]};
+}
+
+/* ---------- FORMWORK ---------- */
+function fwPrice(k){return num((state.prices.formwork_data||{})[k]);}
+const ADD_NAMES={setdown:'Set-down',fold:'Fold',hob:'Hob/upturn',rebate:'Rebate'};
+// Height-banded frame-shoring take-off (ported from the Slabs.py engine).
+// baseFrames = ceil(deck area / 2.7) for decks, or ceil(length / 1.1) for beams.
+function bandedFrames(baseFrames,fg){
+  const even=n=>{n=Math.ceil(n);return n%2?n+1:n;};
+  const k={shortF:0,tallF:0,shortB:0,tallB:0,uj:0,fj:0,cn:0,ex:0,lowProps:false};
+  if(fg<1.6){k.lowProps=true;}
+  else if(fg<2.2){k.shortF=even(baseFrames);k.shortB=k.shortF;k.uj=k.shortF*2;k.fj=k.shortF*2;}
+  else if(fg<=3){k.tallF=even(baseFrames);k.tallB=k.tallF;k.uj=k.tallF*2;k.fj=k.tallF*2;}
+  else if(fg<3.3){k.tallF=even(baseFrames);k.tallB=k.tallF;k.uj=k.tallF*2;k.fj=k.tallF*2;k.ex=k.tallF*2;}
+  else if(fg<4.1){k.shortF=even(baseFrames);k.tallF=even(baseFrames);k.shortB=k.shortF;k.tallB=k.tallF;k.uj=k.shortF+k.tallF;k.fj=k.uj;k.cn=k.uj;}
+  else if(fg<4.8){k.tallF=even(baseFrames)*2;k.tallB=k.tallF;k.uj=k.tallF;k.fj=k.tallF;k.cn=k.uj;}
+  else {k.tallF=even(baseFrames)*2;k.tallB=k.tallF;k.uj=k.tallF;k.fj=k.tallF;k.cn=k.uj;k.ex=k.uj;}
+  return k;
+}
+function calcFormwork(e,r){
+  const S=state.settings;const nf=(S.newFormworkPct||0)/100;const waste=S.plyWaste||1.2;const sheetM2=1.8*1.2;
+  let cost=0,lines=[],parts=[],autoMd=0;let curSec=e.label;
+  function add(k,qty,unit,reusable,sec){if(!(qty>0))return;const price=fwPrice(k);const factor=reusable?nf:1;const c=qty*price*factor;cost+=c;
+    parts.push({g:'Formwork',k:k,q:qty,u:unit,c:c,reusable:reusable,sec:sec||curSec});
+    lines.push('Formwork — '+k+': '+(Math.round(qty*100)/100)+' '+unit+(reusable?' (@'+Math.round(nf*100)+'% new)':' (new)'));}
+  function shoring(k,fg,sec,baseFrames,lowPropLen){
+    if(k.lowProps){const props=Math.ceil(baseFrames);add('LVL 4x3 timber (m)',Math.ceil(props*Math.max(fg-0.27,0.1)*waste),'m',true,sec);add('200 edgeboard base plate',props,'ea',true,sec);return;}
+    add('1.2m Frame',k.shortF,'ea',true,sec);add('1.8m Frame',k.tallF,'ea',true,sec);
+    add('1.2m Brace',k.shortB,'ea',true,sec);add('1.8m Brace',k.tallB,'ea',true,sec);
+    add('U-Jack',k.uj,'ea',true,sec);add('Flat jack',k.fj,'ea',true,sec);
+    add('Frame connector',k.cn,'ea',true,sec);add('300mm Frame extension',k.ex,'ea',true,sec);
+  }
+  const edgeboardName=d=>(d>(S.edgeThreshold||150))?'LVL 200 edgeboard (m)':'LVL 150 edgeboard (m)';
+
+  if(e.type==='slab'){
+    const st=e.slabType||'ground';const perim=r.perimeter||0,area=r.area||0;
+    const cantA=cantAreaOf(e.shape||[]);
+    const isDeck=(st==='suspended'||st==='bondek');
+    const deckA=isDeck?Math.max(area-cantA,0):0;
+    if(!isDeck){ // on-ground: edge forms (raft gets the deep edge-beam board)
+      add(st==='raft'?'LVL 200 edgeboard (m)':edgeboardName(e.thickness),Math.ceil(perim),'m',true);
+      add('Star picket',Math.ceil(perim/(S.picketSpacing||1)),'ea',true);
+      add('Ableflex (m)',Math.ceil(perim),'m',false);
+    }
+    if(st==='wafflepod'){ // void formers + ableflex (all consumed, full cost)
+      const pods=Math.ceil(1.51*area);
+      add((e.podHeight||225)+'mm pod',pods,'ea',false);
+      add('Pod spacer',Math.ceil(1.4*pods),'ea',false);
+      add('Pod chair',Math.ceil(2*pods),'ea',false);
+    }
+    if(deckA>0){
+      const fg=e.fromGround||2.4;const th=e.thickness/1000;
+      if(st==='bondek') add('Bondek (m²)',Math.ceil(deckA),'m²',false);          // steel sheet = permanent soffit form
+      else              add('Plywood 1.8 x 1.2',Math.ceil(deckA*1.2/sheetM2),'sheet',!e.class2); // suspended soffit ply
+      add('Plywood 1.8 x 1.2',Math.ceil((th*1.2*perim)/sheetM2),'sheet',true);    // edge ply
+      add('Fillet (m)',Math.ceil(perim*1.1),'m',true);
+      add('LVL 4x3 timber (m)',Math.ceil(perim*1.2),'m',true);                    // edge timber
+      const approx=Math.sqrt(deckA);
+      add('LVL Bearer (m)',Math.ceil(Math.floor(approx/1.2)*approx*1.2),'m',true);// bearers
+      add('LVL 4x3 timber (m)',Math.ceil(Math.floor(approx/0.2)*approx*1.2),'m',true); // joists
+      const baseFrames=Math.ceil(deckA/2.7);const k=bandedFrames(baseFrames,fg);shoring(k,fg,curSec,baseFrames);
+    }
+    if(cantA>0){ // cantilever stays on its own propped/backpropped model + auto labour
+      const sec=e.label+' · Cantilever';
+      add('Plywood 1.8 x 1.2',Math.ceil(cantA*waste/sheetM2),'sheet',!e.class2,sec);
+      add('LVL 4x3 timber (m)',Math.ceil(cantA/(S.joistSpacing||0.45)),'m',true,sec);
+      add('LVL Bearer (m)',Math.ceil(cantA/(S.bearerSpacing||0.9)),'m',true,sec);
+      const cprops=Math.ceil(cantA/Math.pow(S.cantPropGrid||0.9,2))*(S.backpropFactor||2);
+      add('Props',cprops,'ea',true,sec);add('U-Jack',cprops,'ea',true,sec);
+      autoMd+=cantA*(S.cantLabourMdPerM2||0);
+    }
+  } else if(e.type==='footing'){
+    if(e.suspended){ // formed / elevated beam — ported beam take-off + banded frames by soffit height
+      const L=e.flength,w=e.fwidth/1000,d=e.fheight/1000,fg=e.soffitHeight||2.4;
+      const plyM2=L*d*2 + Math.max(L*1.2 - L*w,0);                                        // 2 sides + base
+      add('Plywood 1.8 x 1.2',Math.ceil(plyM2/sheetM2),'sheet',!e.class2);
+      add('LVL Bearer (m)',Math.ceil(2*L*1.2),'m',true);                                  // 2 bearers
+      add('LVL 4x3 timber (m)',Math.ceil(Math.floor(L/0.3)*1.4),'m',true);                // bracing timbers
+      const perSide=Math.max(2,Math.ceil(e.fheight/300));add('LVL 4x3 timber (m)',Math.ceil(perSide*2*L*1.2),'m',true); // side timbers
+      const baseFrames=Math.ceil(L/1.1);const k=bandedFrames(baseFrames,fg);shoring(k,fg,curSec,2*baseFrames);
+    }
+  } else if(e.type==='stairs'){
+    const width=e.width,slope=r.slope||0;
+    add('LVL 4x2 timber (m)',Math.ceil(e.risers*width),'m',true);
+    const sideArea=2*slope*((e.riserHeight+e.throat)/1000);
+    add('Plywood 1.8 x 1.2',Math.ceil(sideArea*waste/sheetM2),'sheet',true);
+    add('Props',Math.max(2,Math.ceil(slope/(S.propGrid||1.2))*2),'ea',true);
+  } else if(e.type==='column'){
+    if(e.shape==='round'){add('PVC column former (m)',Math.ceil(e.count*e.height),'m',false);}
+    else{const perim=2*(e.cwidth+e.cdepth)/1000;add('Plywood 1.8 x 1.2',Math.ceil(perim*e.height*e.count*waste/sheetM2),'sheet',!e.class2);
+      add('Column clamp',e.count*Math.ceil(e.height/0.45),'ea',true);}
+  } else if(e.type==='wall'){
+    const area=e.length*e.height;
+    if(e.system==='conventional'){
+      add('Plywood 1.8 x 1.2',Math.ceil(area*2*waste/sheetM2),'sheet',!e.class2);           // both faces
+      add('LVL 4x3 timber (m)',Math.ceil(((e.length/0.45)*e.height+(e.height/0.45)*e.length)*waste),'m',true); // studs + walers
+      add('Coil tie',Math.ceil(area*4),'ea',false);
+      add('Props',Math.ceil(e.length/1.5)*2,'ea',true);                                       // braced both sides
+    } else if(e.system==='pvc'){
+      add('Dincel '+(e.pvcProfile||200)+' (m²)',Math.ceil(area),'m²',false);                 // permanent form, by profile
+      add('Props',Math.ceil(e.length/1.5),'ea',true);                                         // braced one side
+    } else if(e.system==='blockwork'){
+      add('200 block',Math.ceil(area*12.5),'ea',false);
+      add('Control joint (m)',Math.ceil(Math.ceil(e.length/6)*e.height),'m',false);           // no ply / no bracing
+    }
+  } else if(e.type==='kerb'){
+    add('LVL 150 edgeboard (m)',Math.ceil(e.kerbLength*2.4+e.laybackLength*1.2),'m',true);
+    add('H2 70x35 timber (m)',Math.ceil(e.kerbLength*1.2+e.laybackLength*2.4),'m',true);
+    add('Star picket',Math.ceil((e.kerbLength+e.laybackLength+1)*4),'ea',true);
+  }
+  // hob / upstand formwork (wall form), tagged to its own section
+  (e.additions||[]).forEach(a=>{if(a.type==='hob'){
+    const sec=e.label+' · '+(ADD_NAMES[a.type]||'Upturn');
+    const faces=a.eachFace?2:1;const faceArea=a.length*(a.height/1000)*faces;
+    add('Plywood 1.8 x 1.2',Math.ceil(faceArea*waste/sheetM2),'sheet',!a.class2,sec);
+    add('LVL 4x2 timber (m)',Math.ceil(a.length*faces*waste),'m',true,sec);
+    if(a.height>300)add('Props',Math.ceil(a.length/1.0)*faces,'ea',true,sec);
+  }});
+  return {cost,lines,parts,autoMd};
+}
+
+function calcElement(e){
+  let r=e.type==='slab'?calcSlab(e):(e.type==='stairs'?calcStairs(e):(e.type==='footing'?calcFooting(e):(e.type==='pile'?calcPile(e):(e.type==='column'?calcColumn(e):(e.type==='wall'?calcWall(e):(e.type==='kerb'?calcKerb(e):calcExcavation(e)))))));
+  const fw=calcFormwork(e,r);
+  r.formworkCost=fw.cost;
+  r.autoMd=(r.autoMd||0)+(fw.autoMd||0);
+  r.parts=(r.parts||[]).concat(fw.parts);
+  r.parts.forEach(pt=>{if(!pt.sec)pt.sec=e.label;});   // default any untagged part to the element section
+  if(fw.lines.length)r.buy=(r.buy||[]).concat(fw.lines);
+  return r;
+}
+
+/* ---------- POUR ROLLUP + AUTO LABOUR ---------- */
+function areaBandDays(a){ // editable m²→man-day model (defaults = Driveways)
+  const B=Object.assign({},DEFAULT_AREABAND,state.settings.areaBand||{});
+  if(a<=0)return 0;
+  if(a<=B.a1)return B.d1; if(a<=B.a2)return B.d2; if(a<=B.a3)return B.d3; if(a<=B.a4)return B.d4;
+  return B.topDays+Math.ceil((a-B.topRef)/B.topStep);
+}
+function calcPour(p){
+  let concVol=p.extraConc||0,steelCost=0,chairCost=0,fwCost=0,extraMd=0,machineCost=0,disposalCost=0,fillCost=0,slabArea=0;
+  p.elements.forEach(e=>{const r=calcElement(e);e._r=r;concVol+=r.volume;steelCost+=r.steelCost;chairCost+=r.chairCost;fwCost+=(r.formworkCost||0);
+    machineCost+=(r.machineCost||0);disposalCost+=(r.disposalCost||0);fillCost+=(r.fillCost||0);if(e.type==='slab')slabArea+=(r.area||0);
+    extraMd+=num(e.labMen)*num(e.labDays)+(r.autoMd||0);(e.additions||[]).forEach(a=>{extraMd+=num(a.labMen)*num(a.labDays);});});
+  const extraSteelCost=(p.extraSteel||0)*tonnage();steelCost+=extraSteelCost;
+  const mixRate=num(state.prices.concrete_mixes_data[p.mix]);const concCost=concVol*mixRate;
+  const pumpCost=p.pump?num(p.pumpCost):0;
+  const labourBase=concCost+steelCost+chairCost+fwCost;
+  const pct=(p.labourPct!=null&&p.labourPct!=='')?num(p.labourPct):state.settings.labourPercent;
+  const rate=state.settings.manDayRate;let labourCost,manDays,labourBasis;
+  if(p.labourMode==='manual'){manDays=(p.labourMen||0)*(p.labourDays||0);labourCost=manDays*rate;labourBasis='manual';}
+  else if(p.labourMode==='area'){
+    if(slabArea>0){manDays=areaBandDays(slabArea);labourCost=manDays*rate;labourBasis='area';}
+    else{labourCost=labourBase*pct/100;manDays=rate>0?labourCost/rate:0;labourBasis='pct-fallback';}
+  }
+  else{labourCost=labourBase*pct/100;manDays=rate>0?labourCost/rate:0;labourBasis='pct';}
+  const extraLabourCost=extraMd*rate;labourCost+=extraLabourCost;manDays+=extraMd;
+  const otherCost=machineCost+disposalCost+fillCost;
+  const materials=concCost+steelCost+chairCost+fwCost+pumpCost+otherCost;const total=materials+labourCost;
+  return{concVol,concCost,steelCost,chairCost,fwCost,pumpCost,machineCost,disposalCost,fillCost,otherCost,labourBase,labourCost,manDays,extraMd,extraLabourCost,materials,total,mixRate,pct,rate,slabArea,labourBasis};
+}
+
+/* ---------- RENDER ---------- */
+function renderPours(){const wrap=$('poursWrap');wrap.innerHTML='';
+  if(state.pours.length===0){wrap.innerHTML='<div class="panel"><p class="sub" style="margin:0">No pours yet — add one to start.</p></div>';return;}
+  state.pours.forEach(p=>{const pr=calcPour(p);const div=document.createElement('div');div.className='pour';
+    const manual=p.labourMode==='manual';const areaMode=p.labourMode==='area';
+    div.innerHTML='<div class="pour-head">'+
+      '<input class="pour-name" value="'+escapeAttr(p.name)+'" onchange="editPour('+p.id+",'name',this.value)\">"+
+      '<div><div class="pt-lbl">Pour cost</div><div class="pour-total">'+fmt(pr.total)+'</div></div>'+
+      '<button class="x-btn" title="Remove pour" onclick="removePour('+p.id+')">&times;</button></div>'+
+      '<div class="pour-body">'+
+        '<div class="pour-config">'+
+          '<div class="field"><label class="fld">Concrete mix</label><select onchange="editPour('+p.id+",'mix',this.value)\">"+mixOptions(p.mix)+'</select></div>'+
+          '<div class="field"><label class="fld">Pump?</label><select onchange="editPour('+p.id+",'pump',this.value===&#39;yes&#39;)\"><option value=\"no\" "+(!p.pump?'selected':'')+'>No</option><option value="yes" '+(p.pump?'selected':'')+'>Yes</option></select></div>'+
+          '<div class="field"><label class="fld">Pump cost ($)</label><input class="num" type="number" value="'+p.pumpCost+'" '+(!p.pump?'disabled':'')+' onchange="editPour('+p.id+",'pumpCost',this.value,true)\"></div>"+
+          '<div class="field"><label class="fld">Extra concrete (m³)</label><input class="num" type="number" value="'+p.extraConc+'" onchange="editPour('+p.id+",'extraConc',this.value,true)\"></div>"+
+          '<div class="field"><label class="fld">Extra steel (t)</label><input class="num" type="number" value="'+p.extraSteel+'" onchange="editPour('+p.id+",'extraSteel',this.value,true)\"></div>"+
+          '<div class="field"><label class="fld">Labour</label><select onchange="editPour('+p.id+",'labourMode',this.value)\"><option value=\"area\" "+(areaMode?'selected':'')+'>Auto — by slab m²</option><option value="auto" '+(!manual&&!areaMode?'selected':'')+'>Auto — % of materials</option><option value="manual" '+(manual?'selected':'')+'>Manual man-days</option></select></div>'+
+          (manual
+            ?'<div class="field"><label class="fld">Men</label><input class="num" type="number" value="'+p.labourMen+'" onchange="editPour('+p.id+",'labourMen',this.value,true)\"></div>"+
+             '<div class="field"><label class="fld">Days</label><input class="num" type="number" value="'+p.labourDays+'" onchange="editPour('+p.id+",'labourDays',this.value,true)\"></div>"
+            :areaMode
+            ?'<div class="field"><label class="fld">Slab area</label><input value="'+pr.slabArea.toFixed(1)+' m²'+(pr.labourBasis==='pct-fallback'?' (no slab → %)':'')+'" disabled></div>'
+            :'<div class="field"><label class="fld">Labour % (blank = '+state.settings.labourPercent+')</label><input class="num" type="number" value="'+(p.labourPct==null?'':p.labourPct)+'" onchange="editPour('+p.id+",'labourPct',this.value)\"></div>")+
+          '<div class="field"><label class="fld">Labour = '+pr.manDays.toFixed(1)+' man-days'+(pr.extraMd>0?' (incl '+pr.extraMd.toFixed(1)+' md sections)':'')+'</label><input value="'+fmt(pr.labourCost)+(areaMode&&pr.labourBasis==='area'?' (m² band)':(manual?'':' ('+pr.pct+'%)'))+'" disabled></div>'+
+        '</div>'+
+        '<div id="els-'+p.id+'"></div>'+
+        '<div class="add-el-row">'+
+          '<button class="btn ghost sm" onclick="addElement('+p.id+",'footing')\">+ Footing / beam</button>"+
+          '<button class="btn ghost sm" onclick="addElement('+p.id+",'slab')\">+ Slab</button>"+
+          '<button class="btn ghost sm" onclick="addElement('+p.id+",'stairs')\">+ Stairs</button>"+
+          '<button class="btn ghost sm" onclick="addElement('+p.id+",'wall')\">+ Wall</button>"+
+          '<button class="btn ghost sm" onclick="addElement('+p.id+",'column')\">+ Column</button>"+
+          '<button class="btn ghost sm" onclick="addElement('+p.id+",'pile')\">+ Pile</button>"+
+          '<button class="btn ghost sm" onclick="addElement('+p.id+",'kerb')\">+ Kerb</button>"+
+          '<button class="btn ghost sm" onclick="addElement('+p.id+",'excavation')\">+ Excavation</button>"+
+          '<span class="pill" style="margin-left:auto">concrete '+pr.concVol.toFixed(2)+' m³ · '+fmt(pr.concCost)+' &nbsp;|&nbsp; steel+chairs '+fmt(pr.steelCost+pr.chairCost)+' &nbsp;|&nbsp; formwork '+fmt(pr.fwCost)+(pr.otherCost>0?' &nbsp;|&nbsp; machine+cartage '+fmt(pr.otherCost):'')+' &nbsp;|&nbsp; labour '+pr.manDays.toFixed(1)+' md</span>'+
+        '</div></div>';
+    wrap.appendChild(div);const elWrap=div.querySelector('#els-'+p.id);
+    p.elements.forEach(e=>elWrap.appendChild(renderElement(p,e)));});
+  wireShapeDrag();
+}
+function renderElement(p,e){const div=document.createElement('div');div.className='element';const r=e._r||calcElement(e);
+  const cost=(r.volume*calcPour(p).mixRate)+r.steelCost+r.chairCost+(r.formworkCost||0)+(r.otherCost||0);
+  div.innerHTML=(e.type==='slab')?slabHtml(p,e,r,cost):(e.type==='stairs'?stairsHtml(p,e,r,cost):(e.type==='footing'?footingHtml(p,e,r,cost):(e.type==='pile'?pileHtml(p,e,r,cost):(e.type==='column'?columnHtml(p,e,r,cost):(e.type==='wall'?wallHtml(p,e,r,cost):(e.type==='kerb'?kerbHtml(p,e,r,cost):excavationHtml(p,e,r,cost)))))));return div;}
+
+/* shape svg */
+function shapeSVG(e,r){const W=460,H=300,pad=24;const b=shapeBounds(e.shape);const sw=Math.max(b.maxX-b.minX,1),sh=Math.max(b.maxY-b.minY,1);
+  const s=Math.min((W-2*pad)/sw,(H-2*pad)/sh);const ox=pad+(W-2*pad-sw*s)/2,oy=pad+(H-2*pad-sh*s)/2;
+  const X=v=>ox+(v-b.minX)*s,Y=v=>oy+(v-b.minY)*s;
+  let g='';for(let gx=Math.ceil(b.minX);gx<=Math.floor(b.maxX);gx++)g+='<line x1="'+X(gx)+'" y1="'+Y(b.minY)+'" x2="'+X(gx)+'" y2="'+Y(b.maxY)+'" stroke="#eee"/>';
+  for(let gy=Math.ceil(b.minY);gy<=Math.floor(b.maxY);gy++)g+='<line x1="'+X(b.minX)+'" y1="'+Y(gy)+'" x2="'+X(b.maxX)+'" y2="'+Y(gy)+'" stroke="#eee"/>';
+  let rects='';e.shape.forEach(rc=>{const fill=rc.kind==='add'?'rgba(227,146,31,.35)':(rc.kind==='cant'?'rgba(51,110,123,.45)':'rgba(158,60,46,.5)');const stroke=rc.kind==='add'?'#C97A12':(rc.kind==='cant'?'#2b6470':'#7a2c22');
+    rects+='<rect class="shape-rect" data-rid="'+rc.id+'" x="'+X(rc.x)+'" y="'+Y(rc.y)+'" width="'+(rc.w*s)+'" height="'+(rc.l*s)+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="1.5" style="cursor:move"/>'+
+      '<text x="'+(X(rc.x)+rc.w*s/2)+'" y="'+(Y(rc.y)+rc.l*s/2)+'" text-anchor="middle" dominant-baseline="middle" font-size="11" font-family="monospace" fill="#26333C">'+(rc.kind==='cut'?'cut ':(rc.kind==='cant'?'cant ':''))+rc.w+'×'+rc.l+'</text>';});
+  return '<svg class="shape-svg shape-canvas" width="'+W+'" height="'+H+'" data-pid="__PID__" data-eid="'+e.id+'" viewBox="0 0 '+W+' '+H+'"><rect width="'+W+'" height="'+H+'" fill="#fff"/>'+g+rects+'</svg>';
+}
+let dragCtx=null;
+function wireShapeDrag(){document.querySelectorAll('.shape-svg').forEach(svg=>{
+  svg.querySelectorAll('.shape-rect').forEach(rect=>{
+    rect.addEventListener('pointerdown',ev=>{ev.preventDefault();const pid=parseInt(svg.dataset.pid),eid=parseInt(svg.dataset.eid),rid=parseInt(rect.dataset.rid);
+      const el=findEl(pid,eid);const rc=el.shape.find(x=>x.id===rid);const b=shapeBounds(el.shape);
+      const W=460,H=300,pad=24;const sw=Math.max(b.maxX-b.minX,1),sh=Math.max(b.maxY-b.minY,1);const s=Math.min((W-2*pad)/sw,(H-2*pad)/sh);
+      const pt=svg.getBoundingClientRect();dragCtx={pid,eid,rid,s,startX:ev.clientX,startY:ev.clientY,ox:rc.x,oy:rc.y,rc};
+      rect.setPointerCapture(ev.pointerId);});
+  });});
+}
+document.addEventListener('pointermove',ev=>{if(!dragCtx)return;const dx=(ev.clientX-dragCtx.startX)/dragCtx.s,dy=(ev.clientY-dragCtx.startY)/dragCtx.s;
+  dragCtx.rc.x=Math.max(0,Math.round((dragCtx.ox+dx)*10)/10);dragCtx.rc.y=Math.max(0,Math.round((dragCtx.oy+dy)*10)/10);
+  const svg=document.querySelector('.shape-svg[data-eid="'+dragCtx.eid+'"]');if(svg){const el=findEl(dragCtx.pid,dragCtx.eid);const r=calcSlab(el);svg.outerHTML=shapeSVG(el,r).replace('__PID__',dragCtx.pid);}});
+document.addEventListener('pointerup',()=>{if(dragCtx){dragCtx=null;renderPours();recalc();saveState();}});
+
+function rectTable(p,e){let rows=e.shape.map(rc=>'<tr>'+
+  '<td><span class="rect-swatch" style="background:'+(rc.kind==='add'?'rgba(227,146,31,.6)':(rc.kind==='cant'?'rgba(51,110,123,.7)':'rgba(158,60,46,.7)'))+'"></span><select onchange="editRect('+p.id+','+e.id+','+rc.id+",'kind',this.value)\"><option value=\"add\" "+(rc.kind==='add'?'selected':'')+'>Slab</option><option value="cant" '+(rc.kind==='cant'?'selected':'')+'>Cantilever</option><option value="cut" '+(rc.kind==='cut'?'selected':'')+'>Cut-out</option></select></td>'+
+  '<td><input class="num" type="number" step="0.1" value="'+rc.x+'" onchange="editRect('+p.id+','+e.id+','+rc.id+",'x',this.value)\"></td>"+
+  '<td><input class="num" type="number" step="0.1" value="'+rc.y+'" onchange="editRect('+p.id+','+e.id+','+rc.id+",'y',this.value)\"></td>"+
+  '<td><input class="num" type="number" step="0.1" value="'+rc.w+'" onchange="editRect('+p.id+','+e.id+','+rc.id+",'w',this.value)\"></td>"+
+  '<td><input class="num" type="number" step="0.1" value="'+rc.l+'" onchange="editRect('+p.id+','+e.id+','+rc.id+",'l',this.value)\"></td>"+
+  '<td><button class="x-btn" onclick="removeRect('+p.id+','+e.id+','+rc.id+')">&times;</button></td></tr>').join('');
+  return '<table class="rect-tbl"><thead><tr><th>Part</th><th>X</th><th>Y</th><th>W (m)</th><th>L (m)</th><th></th></tr></thead><tbody>'+rows+'</tbody></table>'+
+    '<div class="btn-row"><button class="btn ghost sm" onclick="addRect('+p.id+','+e.id+",'add')\">+ Rectangle</button><button class=\"btn ghost sm\" onclick=\"addRect("+p.id+','+e.id+",'cant')\">+ Cantilever</button><button class=\"btn ghost sm\" onclick=\"addRect("+p.id+','+e.id+",'cut')\">+ Cut-out</button></div>";
+}
+function additionCard(p,e,a){const dia=b=>['8mm','11mm','12mm','16mm','20mm','24mm'].map(x=>'<option '+(x===b?'selected':'')+'>'+x+'</option>').join('');
+  const fld=(lbl,field,val,step)=>'<div class="field"><label class="fld">'+lbl+'</label><input class="num" type="number" step="'+(step||1)+'" value="'+val+'" onchange="editAddition('+p.id+','+e.id+','+a.id+",'"+field+"',this.value,'num')\"></div>";
+  const sel=(lbl,field,val)=>'<div class="field"><label class="fld">'+lbl+'</label><select onchange="editAddition('+p.id+','+e.id+','+a.id+",'"+field+"',this.value)\">"+dia(val)+'</select></div>';
+  const chk=(lbl,field,val)=>'<label class="chk"><input type="checkbox" '+(val?'checked':'')+' onchange="editAddition('+p.id+','+e.id+','+a.id+",'"+field+"',this.checked,'bool')\">"+lbl+'</label>';
+  let body='';
+  if(a.type==='setdown')body='<div class="grid g5">'+fld('Area (m²)','area',a.area,0.1)+fld('Depth (mm)','depth',a.depth)+
+    '<div class="field"><label class="fld">Direction</label><select onchange="editAddition('+p.id+','+e.id+','+a.id+",'updown',this.value)\"><option "+(a.updown==='Down'?'selected':'')+'>Down</option><option '+(a.updown==='Up'?'selected':'')+'>Up</option></select></div>'+
+    fld('Perimeter (m)','perimeter',a.perimeter,0.1)+'<div class="field" style="align-self:end">'+chk('Z-bars','zbar',a.zbar)+'</div></div>'+(a.zbar?'<div class="grid g5" style="margin-top:8px">'+sel('Z-bar dia','zdia',a.zdia)+fld('Z-bar spacing','zspacing',a.zspacing)+'</div>':'');
+  else if(a.type==='fold')body='<div class="grid g5">'+fld('Length (m)','length',a.length,0.1)+fld('Width (mm)','width',a.width)+fld('Top setdown (mm)','topSetdown',a.topSetdown)+fld('Soffit height (mm)','soffit',a.soffit)+'<div class="field" style="align-self:end">'+chk('Each face','eachFace',a.eachFace)+'</div></div>'+
+    '<div class="grid g5" style="margin-top:8px">'+'<div class="field" style="align-self:end">'+chk('Z-bars','zbar',a.zbar)+'</div>'+(a.zbar?sel('Z-bar dia','zdia',a.zdia)+fld('Z-bar spacing','zspacing',a.zspacing):'')+'<div class="field" style="align-self:end">'+chk('Deep fold','deep',a.deep)+'</div>'+(a.deep?sel('Fold bar','foldBar',a.foldBar)+fld('Fold spacing','foldSpacing',a.foldSpacing):'')+'</div>';
+  else if(a.type==='hob')body='<div class="grid g5">'+fld('Length (m)','length',a.length,0.1)+fld('Height (mm)','height',a.height)+fld('Width (mm)','width',a.width)+sel('L-bar dia','lbarDia',a.lbarDia)+fld('L-bar slab leg (mm)','lbarSlabLeg',a.lbarSlabLeg)+'</div>'+
+    '<div class="grid g5" style="margin-top:8px">'+fld('L-bar spacing','lbarSpacing',a.lbarSpacing)+sel('Straight bar','straightDia',a.straightDia)+'<div class="field" style="align-self:end">'+chk('Upturn (multi-row)','upturn',a.upturn)+'</div>'+(a.upturn?fld('Straight spacing','straightSpacing',a.straightSpacing):'')+'<div class="field" style="align-self:end">'+chk('Each face','eachFace',a.eachFace)+'</div></div>';
+  else if(a.type==='rebate')body='<div class="grid g5">'+fld('Length (m)','length',a.length,0.1)+fld('Footing depth (mm)','footingDepth',a.footingDepth)+fld('Footing cover (mm)','footingCover',a.footingCover)+sel('Footing bar','footingDia',a.footingDia)+fld('Footing leg (mm)','footingLeg',a.footingLeg)+'</div>'+
+    '<div class="grid g5" style="margin-top:8px">'+sel('Z-bar dia','zdia',a.zdia)+fld('Z-bar spacing','zspacing',a.zspacing)+'</div>';
+  const names={setdown:'Set-down',fold:'Fold',hob:'Hob / upturn',rebate:'Rebate'};
+  const foot='<div class="grid g5" style="margin-top:10px;border-top:1px dashed var(--line);padding-top:10px">'+
+    '<div class="field" style="align-self:end">'+chk('Class 2 finish','class2',a.class2)+'</div>'+
+    fld('Extra labour — men','labMen',a.labMen||0,1)+fld('× days','labDays',a.labDays||0,0.5)+
+    '<div class="field" style="align-self:end"><div class="hint">Adds '+((num(a.labMen)*num(a.labDays))||0)+' man-days on top of the pour labour.</div></div></div>';
+  return '<div class="addition"><div class="ahead"><span class="aname">'+names[a.type]+(a.class2?' · Class 2':'')+'</span><button class="x-btn" style="margin-left:auto" onclick="removeAddition('+p.id+','+e.id+','+a.id+')">&times;</button></div>'+body+foot+'</div>';
+}
+function extraLabRow(p,e){const md=(num(e.labMen)*num(e.labDays))||0;
+  return '<div class="sub-lbl">Extra labour for this section (added on top of pour labour)</div><div class="grid g5">'+
+    '<div class="field"><label class="fld">Men</label><input class="num" type="number" value="'+(e.labMen||0)+'" onchange="editElement('+p.id+','+e.id+",'labMen',this.value,true)\"></div>"+
+    '<div class="field"><label class="fld">× Days</label><input class="num" type="number" step="0.5" value="'+(e.labDays||0)+'" onchange="editElement('+p.id+','+e.id+",'labDays',this.value,true)\"></div>"+
+    '<div class="field" style="align-self:end"><div class="hint">'+md+' man-days = '+fmt(md*state.settings.manDayRate)+'</div></div></div>';}
+function slabHtml(p,e,r,cost){
+  const st=e.slabType||'ground';const isDeck=(st==='suspended'||st==='bondek');
+  const typeOpts=[['ground','Flat ground'],['raft','Raft'],['suspended','Suspended deck'],['wafflepod','Wafflepod'],['bondek','Bondek']].map(o=>'<option value="'+o[0]+'"'+(st===o[0]?' selected':'')+'>'+o[1]+'</option>').join('');
+  const podOpts=[150,225,300].map(v=>'<option value="'+v+'"'+((e.podHeight||225)===v?' selected':'')+'>'+v+'mm</option>').join('');
+  const barOpts=b=>['8mm','11mm','12mm','16mm','20mm','24mm'].map(x=>'<option '+(x===b?'selected':'')+'>'+x+'</option>').join('');
+  const meshOpts=m=>['SL72','SL82','SL92','SL102'].map(x=>'<option '+(x===m?'selected':'')+'>'+x+'</option>').join('');
+  const steelFace=(tag,pfx)=>{let h='<div class="field"><label class="fld">'+tag+' steel</label><select onchange="editElement('+p.id+','+e.id+",'"+pfx+"Type',this.value)\"><option value=\"rebar\" "+(e[pfx+'Type']==='rebar'?'selected':'')+'>Rebar</option><option value="mesh" '+(e[pfx+'Type']==='mesh'?'selected':'')+'>Mesh</option><option value="none" '+(e[pfx+'Type']==='none'?'selected':'')+'>None</option></select></div>';
+    if(e[pfx+'Type']==='rebar')h+='<div class="field"><label class="fld">'+tag+' bar</label><select onchange="editElement('+p.id+','+e.id+",'"+pfx+"Bar',this.value)\">"+barOpts(e[pfx+'Bar'])+'</select></div><div class="field"><label class="fld">'+tag+' spacing</label><input class="num" type="number" value="'+e[pfx+'Spacing']+'" onchange="editElement('+p.id+','+e.id+",'"+pfx+"Spacing',this.value,true)\"></div>";
+    else if(e[pfx+'Type']==='mesh')h+='<div class="field" style="grid-column:span 2"><label class="fld">'+tag+' mesh</label><select onchange="editElement('+p.id+','+e.id+",'"+pfx+"Mesh',this.value)\">"+meshOpts(e[pfx+'Mesh'])+'</select></div>';return h;};
+  const adds=e.additions.map(a=>additionCard(p,e,a)).join('');
+  const SH=pcwHelpers(p,e);
+  return '<div class="element-head"><span class="etype">Slab</span><input class="elabel" value="'+escapeAttr(e.label)+'" onchange="editElement('+p.id+','+e.id+",'label',this.value)\"><span class=\"ecost\">"+fmt(cost)+'</span><button class="x-btn" onclick="removeElement('+p.id+','+e.id+')">&times;</button></div>'+
+    '<div class="element-body">'+
+      '<div class="sub-lbl">Shape — drag parts, or type sizes. Add rectangles for L-shapes; add cut-outs for holes.</div>'+
+      '<div class="btn-row" style="margin-bottom:12px;align-items:flex-end;gap:10px">'+
+        '<div class="field" style="max-width:170px"><label class="fld">Quick m² (assumes square)</label><input class="num" type="number" step="0.1" placeholder="e.g. 100" onchange="setSlabArea('+p.id+','+e.id+',this.value)"></div>'+
+        '<div class="hint" style="padding-bottom:8px">Sets the shape to one square of that area. For exact sizes or L-shapes, use the table on the right.</div>'+
+      '</div>'+
+      '<div class="shape-wrap"><div>'+shapeSVG(e,r).replace('__PID__',p.id)+'<div class="hint" style="text-align:center">Area <b>'+r.area.toFixed(1)+' m²</b> · perimeter <b>'+r.perimeter.toFixed(1)+' m</b></div></div>'+
+      '<div class="shape-side">'+rectTable(p,e)+'</div></div>'+
+      '<div class="sub-lbl">Slab</div>'+
+      '<div class="grid g5">'+
+        '<div class="field"><label class="fld">'+(st==='wafflepod'?'Topping (mm)':'Thickness (mm)')+'</label><input class="num" type="number" value="'+e.thickness+'" onchange="editElement('+p.id+','+e.id+",'thickness',this.value,true)\"></div>"+
+        '<div class="field"><label class="fld">Type</label><select onchange="editElement('+p.id+','+e.id+",'slabType',this.value)\">"+typeOpts+'</select></div>'+
+        (st==='wafflepod'?'<div class="field"><label class="fld">Pod height</label><select onchange="editElement('+p.id+','+e.id+",'podHeight',this.value,true)\">"+podOpts+'</select></div>':'')+
+        (isDeck?'<div class="field"><label class="fld">Class 2 finish?</label><select onchange="editElement('+p.id+','+e.id+",'class2',this.value===&#39;yes&#39;)\"><option value=\"no\" "+(!e.class2?'selected':'')+'>No</option><option value="yes" '+(e.class2?'selected':'')+'>Yes (new soffit ply)</option></select></div><div class="field"><label class="fld">From ground (m)</label><input class="num" type="number" step="0.1" value="'+(e.fromGround||2.4)+'" onchange="editElement('+p.id+','+e.id+",'fromGround',this.value,true)\"></div>":'')+
+        '<div class="field"><label class="fld">Each-way?</label><select onchange="editElement('+p.id+','+e.id+",'ew',this.value===&#39;yes&#39;)\"><option value=\"yes\" "+(e.ew?'selected':'')+'>Yes (EW)</option><option value="no" '+(!e.ew?'selected':'')+'>No</option></select></div>'+
+        '<div class="field"><label class="fld">Top cover (mm)</label><input class="num" type="number" value="'+e.topCover+'" onchange="editElement('+p.id+','+e.id+",'topCover',this.value,true)\"></div>"+
+        '<div class="field"><label class="fld">Bottom cover (mm)</label><input class="num" type="number" value="'+e.botCover+'" onchange="editElement('+p.id+','+e.id+",'botCover',this.value,true)\"></div>"+
+      '</div>'+
+      '<div class="grid g5" style="margin-top:10px">'+steelFace('Top','top')+'</div>'+
+      '<div class="grid g5" style="margin-top:10px">'+steelFace('Bottom','bot')+'</div>'+
+      '<div class="sub-lbl">Edge steel</div><div class="grid g5">'+SH.yn('Perimeter bar?','edgeBar')+(e.edgeBar?SH.sel('Edge bar','edgeBarDia',['10mm','12mm','16mm'])+SH.nf('Corners','corners')+SH.nf('Re-entrants','reentrants'):'')+'</div>'+
+      '<div class="sub-lbl">Additions</div>'+adds+
+      '<div class="btn-row"><button class="btn ghost sm" onclick="addAddition('+p.id+','+e.id+",'setdown')\">+ Set-down</button><button class=\"btn ghost sm\" onclick=\"addAddition("+p.id+','+e.id+",'fold')\">+ Fold</button><button class=\"btn ghost sm\" onclick=\"addAddition("+p.id+','+e.id+",'hob')\">+ Hob</button><button class=\"btn ghost sm\" onclick=\"addAddition("+p.id+','+e.id+",'rebate')\">+ Rebate</button></div>"+
+      extraLabRow(p,e)+
+      '<details class="el-details"><summary>Detail &amp; buy list — '+fmt(cost)+'</summary><div class="element-out">'+
+        '<div class="oline"><span>Concrete (base '+r.base.toFixed(2)+(r.addVol?', additions '+r.addVol.toFixed(2):'')+', +'+state.settings.spillage+'%)</span><span class="v">'+r.volume.toFixed(2)+' m³</span></div>'+
+        '<div class="oline"><span>Concrete cost</span><span class="v">'+fmt(cost-r.steelCost-r.chairCost-(r.formworkCost||0))+'</span></div>'+
+        '<div class="oline"><span>Steel: main '+r.mainLap.toFixed(3)+(r.addSteel?' + additions '+r.addSteel.toFixed(3):'')+' t</span><span class="v">'+r.steelWeight.toFixed(3)+' t</span></div>'+
+        '<div class="oline"><span>Steel cost</span><span class="v">'+fmt(r.steelCost)+'</span></div>'+
+        '<div class="oline"><span>Chairs</span><span class="v">'+fmt(r.chairCost)+'</span></div>'+
+        '<div class="oline"><span>Formwork'+((e.slabType==='suspended'||e.slabType==='bondek')&&e.class2?' (Class 2 — new ply)':'')+'</span><span class="v">'+fmt(r.formworkCost||0)+'</span></div>'+
+        '<h5>Buy list</h5><div class="buylist">'+r.buy.concat(r.addLines).concat(r.chairLines).map(escapeHtml).join('<br>')+'</div>'+
+      '</div></details></div>';
+}
+function stairsHtml(p,e,r,cost){const barOpts=b=>['12mm','16mm','20mm'].map(x=>'<option '+(x===b?'selected':'')+'>'+x+'</option>').join('');
+  return '<div class="element-head"><span class="etype">Stairs</span><input class="elabel" value="'+escapeAttr(e.label)+'" onchange="editElement('+p.id+','+e.id+",'label',this.value)\"><span class=\"ecost\">"+fmt(cost)+'</span><button class="x-btn" onclick="removeElement('+p.id+','+e.id+')">&times;</button></div>'+
+    '<div class="element-body"><div class="grid g5">'+
+      '<div class="field"><label class="fld">Risers</label><input class="num" type="number" value="'+e.risers+'" onchange="editElement('+p.id+','+e.id+",'risers',this.value,true)\"></div>"+
+      '<div class="field"><label class="fld">Width (m)</label><input class="num" type="number" value="'+e.width+'" onchange="editElement('+p.id+','+e.id+",'width',this.value,true)\"></div>"+
+      '<div class="field"><label class="fld">Riser height (mm)</label><input class="num" type="number" value="'+e.riserHeight+'" onchange="editElement('+p.id+','+e.id+",'riserHeight',this.value,true)\"></div>"+
+      '<div class="field"><label class="fld">Going (mm)</label><input class="num" type="number" value="'+e.going+'" onchange="editElement('+p.id+','+e.id+",'going',this.value,true)\"></div>"+
+      '<div class="field"><label class="fld">Throat (mm)</label><input class="num" type="number" value="'+e.throat+'" onchange="editElement('+p.id+','+e.id+",'throat',this.value,true)\"></div>"+
+      '<div class="field"><label class="fld">Bar</label><select onchange="editElement('+p.id+','+e.id+",'bar',this.value)\">"+barOpts(e.bar)+'</select></div>'+
+      '<div class="field"><label class="fld">Spacing (mm)</label><input class="num" type="number" value="'+e.spacing+'" onchange="editElement('+p.id+','+e.id+",'spacing',this.value,true)\"></div>"+
+      '<div class="field"><label class="fld">T &amp; B?</label><select onchange="editElement('+p.id+','+e.id+",'tb',this.value===&#39;yes&#39;)\"><option value=\"yes\" "+(e.tb?'selected':'')+'>Yes</option><option value="no" '+(!e.tb?'selected':'')+'>No</option></select></div>'+
+    '</div>'+extraLabRow(p,e)+'<details class="el-details"><summary>Detail &amp; buy list — '+fmt(cost)+'</summary><div class="element-out">'+
+      '<div class="oline"><span>Slope</span><span class="v">'+r.slope.toFixed(2)+' m</span></div>'+
+      '<div class="oline"><span>Concrete (+'+state.settings.spillage+'%)</span><span class="v">'+r.volume.toFixed(2)+' m³</span></div>'+
+      '<div class="oline"><span>Concrete cost</span><span class="v">'+fmt(cost-r.steelCost-r.chairCost-(r.formworkCost||0))+'</span></div>'+
+      '<div class="oline"><span>Steel ('+r.upCount+' up + '+r.acrossCount+' across'+(e.tb?', ×2':'')+')</span><span class="v">'+r.steelWeight.toFixed(3)+' t</span></div>'+
+      '<div class="oline"><span>Steel cost</span><span class="v">'+fmt(r.steelCost)+'</span></div>'+
+      '<div class="oline"><span>Chairs</span><span class="v">'+fmt(r.chairCost)+'</span></div>'+
+      '<h5>Buy list</h5><div class="buylist">'+r.buy.concat(r.chairLines).map(escapeHtml).join('<br>')+'</div></div></details></div>';
+}
+function footingHtml(p,e,r,cost){
+  var E=function(field,isNum){return 'onchange="editElement('+p.id+','+e.id+',\''+field+'\',this.value'+(isNum?',true':'')+')"';};
+  var Eb=function(field){return 'onchange="editElement('+p.id+','+e.id+',\''+field+'\',this.value===\'yes\')"';};
+  var nf=function(lbl,field){return '<div class="field"><label class="fld">'+lbl+'</label><input class="num" type="number" value="'+e[field]+'" '+E(field,true)+'></div>';};
+  var yn=function(lbl,field,yesTxt,noTxt){return '<div class="field"><label class="fld">'+lbl+'</label><select '+Eb(field)+'><option value="yes"'+(e[field]?' selected':'')+'>'+yesTxt+'</option><option value="no"'+(!e[field]?' selected':'')+'>'+noTxt+'</option></select></div>';};
+  var barSel=function(lbl,field,list){var o=list.map(function(x){return '<option'+(x===e[field]?' selected':'')+'>'+x+'</option>';}).join('');return '<div class="field"><label class="fld">'+lbl+'</label><select '+E(field,false)+'>'+o+'</select></div>';};
+  var mains=['8mm','11mm','12mm','16mm','20mm','24mm'],ligs=['10mm','12mm','16mm','20mm','24mm'];
+  var h='<div class="element-head"><span class="etype">Footing / beam</span><input class="elabel" value="'+escapeAttr(e.label)+'" onchange="editElement('+p.id+','+e.id+',\'label\',this.value)"><span class="ecost">'+fmt(cost)+'</span><button class="x-btn" onclick="removeElement('+p.id+','+e.id+')">&times;</button></div>';
+  h+='<div class="element-body"><div class="grid g5">'+nf('Width (mm)','fwidth')+nf('Height (mm)','fheight')+nf('Length (m)','flength')+yn('Strip?','strip','Yes','No')+yn('Suspended?','suspended','Yes','No')+(e.suspended?yn('Class 2?','class2','Yes','No')+nf('Soffit ht (m)','soffitHeight'):'')+nf('Side cover','sideCover')+nf('Bottom cover','botCover')+nf('Top cover','topCover')+'</div>';
+  h+='<div class="sub-lbl">Main trench bars</div><div class="grid g5">'+barSel('Bar','bar',mains)+nf('Bars / face','bars')+yn('T &amp; B?','tb','Yes','No')+'</div>';
+  h+='<div class="sub-lbl">Ligatures</div><div class="grid g5">'+yn('Ligs?','ligs','Yes','No')+(e.ligs?barSel('Lig bar','ligDia',ligs)+nf('Lig spacing','ligSpacing'):'')+'</div>';
+  h+='<div class="sub-lbl">Starter bars</div><div class="grid g5">'+yn('Starters?','starters','Yes','No')+(e.starters?barSel('Starter bar','starterDia',mains)+nf('Spacing','starterSpacing')+nf('Length','starterLength'):'')+'</div>';
+  h+=extraLabRow(p,e);
+  h+='<details class="el-details"><summary>Detail &amp; buy list — '+fmt(cost)+'</summary><div class="element-out">';
+  h+='<div class="oline"><span>Concrete ('+e.fwidth+'\u00d7'+e.fheight+'mm \u00d7 '+e.flength+'m, +'+state.settings.spillage+'%)</span><span class="v">'+r.volume.toFixed(2)+' m\u00b3</span></div>';
+  h+='<div class="oline"><span>Concrete cost</span><span class="v">'+fmt(cost-r.steelCost-r.chairCost-(r.formworkCost||0))+'</span></div>';
+  h+='<div class="oline"><span>Steel: trench '+r.trenchWeight.toFixed(3)+' + ligs '+r.ligWeight.toFixed(3)+' + starters '+r.starterWeight.toFixed(3)+'t, +10%</span><span class="v">'+r.steelWeight.toFixed(3)+' t</span></div>';
+  h+='<div class="oline"><span>Steel cost</span><span class="v">'+fmt(r.steelCost)+'</span></div>';
+  h+='<div class="oline"><span>Chairs</span><span class="v">'+fmt(r.chairCost)+'</span></div>';
+  h+='<div class="oline"><span>Formwork'+(e.suspended?(e.class2?' (Class 2 — new ply)':' (beam)'):' (in trench — none)')+'</span><span class="v">'+fmt(r.formworkCost||0)+'</span></div>';
+  h+='<h5>Buy list</h5><div class="buylist">'+r.buy.concat(r.chairLines).map(escapeHtml).join('<br>')+'</div></div></details></div>';
+  return h;
+}
+function outBlock(cost,olines,buyArr){return '<details class="el-details"><summary>Detail &amp; buy list — '+fmt(cost)+'</summary><div class="element-out">'+olines+'<div class="oline"><span>Formwork</span><span class="v">'+fmt(arguments[3]||0)+'</span></div><h5>Buy list</h5><div class="buylist">'+buyArr.map(escapeHtml).join('<br>')+'</div></div></details>';}
+function elHead(type,p,e,cost){return '<div class="element-head"><span class="etype">'+type+'</span><input class="elabel" value="'+escapeAttr(e.label)+'" onchange="editElement('+p.id+','+e.id+',\'label\',this.value)"><span class="ecost">'+fmt(cost)+'</span><button class="x-btn" onclick="removeElement('+p.id+','+e.id+')">&times;</button></div>';}
+function pcwHelpers(p,e){return {
+  nf:(l,f,s)=>'<div class="field"><label class="fld">'+l+'</label><input class="num" type="number"'+(s?' step="'+s+'"':'')+' value="'+e[f]+'" onchange="editElement('+p.id+','+e.id+',\''+f+'\',this.value,true)"></div>',
+  yn:(l,f)=>'<div class="field"><label class="fld">'+l+'</label><select onchange="editElement('+p.id+','+e.id+',\''+f+'\',this.value===\'yes\')"><option value="yes"'+(e[f]?' selected':'')+'>Yes</option><option value="no"'+(!e[f]?' selected':'')+'>No</option></select></div>',
+  sel:(l,f,list)=>'<div class="field"><label class="fld">'+l+'</label><select onchange="editElement('+p.id+','+e.id+',\''+f+'\',this.value)">'+list.map(x=>'<option'+(x===e[f]?' selected':'')+'>'+x+'</option>').join('')+'</select></div>'
+};}
+function pileHtml(p,e,r,cost){const H=pcwHelpers(p,e);const mains=['12mm','16mm','20mm','24mm'],ligs=['6mm','10mm','12mm','16mm'];
+  let h=elHead('Piles',p,e,cost)+'<div class="element-body"><div class="grid g5">'+H.nf('No. of piles','count')+H.nf('Avg depth (m)','depth',0.1)+H.nf('Diameter (mm)','dia')+H.yn('Reinforced?','reinforced')+'</div>';
+  if(e.reinforced)h+='<div class="sub-lbl">Cage (per pile)</div><div class="grid g5">'+H.nf('Vertical bars','bars')+H.sel('Bar','barDia',mains)+H.sel('Lig','ligDia',ligs)+H.nf('Lig spacing (mm)','ligSpacing')+'</div>';
+  h+=extraLabRow(p,e);
+  const ol='<div class="oline"><span>Concrete ('+e.count+' × '+e.dia+'mm\u00f8 × '+e.depth+'m, +'+state.settings.spillage+'%)</span><span class="v">'+r.volume.toFixed(2)+' m³</span></div>'+
+    '<div class="oline"><span>Concrete cost</span><span class="v">'+fmt(cost-r.steelCost-r.chairCost-(r.formworkCost||0))+'</span></div>'+
+    '<div class="oline"><span>Steel'+(e.reinforced?'':' (mass concrete — none)')+'</span><span class="v">'+r.steelWeight.toFixed(3)+' t</span></div>'+
+    '<div class="oline"><span>Steel cost</span><span class="v">'+fmt(r.steelCost)+'</span></div>';
+  h+=outBlock(cost,ol,r.buy,r.formworkCost)+'</div>';return h;}
+function columnHtml(p,e,r,cost){const H=pcwHelpers(p,e);const mains=['12mm','16mm','20mm','24mm'],ligs=['6mm','10mm','12mm','16mm'];const round=(e.shape==='round');
+  let h=elHead('Columns',p,e,cost)+'<div class="element-body"><div class="grid g5">'+H.nf('No. of columns','count')+H.nf('Height (m)','height',0.1)+
+    '<div class="field"><label class="fld">Shape</label><select onchange="editElement('+p.id+','+e.id+',\'shape\',this.value)"><option value="round"'+(round?' selected':'')+'>Round (PVC)</option><option value="square"'+(!round?' selected':'')+'>Square (ply)</option></select></div>'+
+    (round?H.nf('Diameter (mm)','dia'):H.nf('Width (mm)','cwidth')+H.nf('Depth (mm)','cdepth'))+(round?'':H.yn('Class 2?','class2'))+'</div>'+
+    '<div class="sub-lbl">Cage</div><div class="grid g5">'+H.yn('Reinforced?','reinforced')+(e.reinforced?H.nf('Vertical bars','bars')+H.sel('Bar','barDia',mains)+H.sel('Lig','ligDia',ligs)+H.nf('Lig spacing','ligSpacing'):'')+'</div>';
+  h+=extraLabRow(p,e);
+  const ol='<div class="oline"><span>Concrete ('+e.count+' × '+(round?e.dia+'mm\u00f8':e.cwidth+'\u00d7'+e.cdepth)+' × '+e.height+'m)</span><span class="v">'+r.volume.toFixed(2)+' m³</span></div>'+
+    '<div class="oline"><span>Concrete cost</span><span class="v">'+fmt(cost-r.steelCost-r.chairCost-(r.formworkCost||0))+'</span></div>'+
+    '<div class="oline"><span>Steel</span><span class="v">'+r.steelWeight.toFixed(3)+' t</span></div><div class="oline"><span>Steel cost</span><span class="v">'+fmt(r.steelCost)+'</span></div>';
+  h+=outBlock(cost,ol,r.buy,r.formworkCost)+'</div>';return h;}
+function wallHtml(p,e,r,cost){const H=pcwHelpers(p,e);const bars=['10mm','12mm','16mm','20mm'];const sys=e.system;
+  let h=elHead('Wall',p,e,cost)+'<div class="element-body"><div class="grid g5">'+H.nf('Length (m)','length',0.1)+H.nf('Height (m)','height',0.1)+(sys==='pvc'?'':H.nf('Thickness (mm)','thickness'))+
+    '<div class="field"><label class="fld">System</label><select onchange="editElement('+p.id+','+e.id+',\'system\',this.value)"><option value="conventional"'+(sys==='conventional'?' selected':'')+'>Conventional</option><option value="pvc"'+(sys==='pvc'?' selected':'')+'>PVC (permanent/Dincel)</option><option value="blockwork"'+(sys==='blockwork'?' selected':'')+'>Blockwork</option></select></div>'+
+    (sys==='pvc'?'<div class="field"><label class="fld">PVC profile</label><select onchange="editElement('+p.id+','+e.id+',\'pvcProfile\',this.value,true)"><option value="155"'+(e.pvcProfile==155?' selected':'')+'>155mm</option><option value="200"'+(e.pvcProfile==200?' selected':'')+'>200mm</option><option value="275"'+(e.pvcProfile==275?' selected':'')+'>275mm</option></select></div>':'')+
+    (sys==='conventional'?H.yn('Class 2?','class2'):'')+(sys==='blockwork'?H.nf('Core-fill ratio','coreFill',0.05):'')+'</div>'+
+    '<div class="sub-lbl">Reinforcement</div><div class="grid g5">'+H.yn('Reinforced?','reinforced')+(e.reinforced?H.sel('Bar','barDia',bars)+H.nf('Vert spacing','vSpacing')+H.nf('Horiz spacing','hSpacing')+
+      '<div class="field"><label class="fld">Faces</label><select onchange="editElement('+p.id+','+e.id+',\'faces\',this.value,true)"><option value="1"'+(e.faces==1?' selected':'')+'>1</option><option value="2"'+(e.faces==2?' selected':'')+'>2</option></select></div>':'')+'</div>';
+  h+=extraLabRow(p,e);
+  const ol='<div class="oline"><span>Concrete ('+e.length+'×'+e.height+'×'+(sys==='pvc'?(e.pvcProfile||200):e.thickness)+'mm '+sys+', +'+state.settings.spillage+'%)</span><span class="v">'+r.volume.toFixed(2)+' m³</span></div>'+
+    '<div class="oline"><span>Concrete cost</span><span class="v">'+fmt(cost-r.steelCost-r.chairCost-(r.formworkCost||0))+'</span></div>'+
+    '<div class="oline"><span>Steel'+(e.reinforced?'':' (none)')+'</span><span class="v">'+r.steelWeight.toFixed(3)+' t</span></div><div class="oline"><span>Steel cost</span><span class="v">'+fmt(r.steelCost)+'</span></div>';
+  h+=outBlock(cost,ol,r.buy,r.formworkCost)+'</div>';return h;}
+function kerbHtml(p,e,r,cost){const H=pcwHelpers(p,e);const bars=['10mm','12mm','16mm'];
+  let h=elHead('Kerb / layback',p,e,cost)+'<div class="element-body"><div class="grid g5">'+H.nf('Kerb length (m)','kerbLength',0.1)+H.nf('Layback length (m)','laybackLength',0.1)+H.nf('Vol per m (m³)','volPerM',0.01)+H.nf('Longitudinal bars','bars')+H.sel('Bar','barDia',bars)+'</div>';
+  h+=extraLabRow(p,e);
+  const ol='<div class="oline"><span>Concrete ('+(e.kerbLength+e.laybackLength).toFixed(1)+'m × '+(e.volPerM||0.06)+' m³/m, +'+state.settings.spillage+'%)</span><span class="v">'+r.volume.toFixed(2)+' m³</span></div>'+
+    '<div class="oline"><span>Concrete cost</span><span class="v">'+fmt(cost-r.steelCost-r.chairCost-(r.formworkCost||0))+'</span></div>'+
+    '<div class="oline"><span>Steel</span><span class="v">'+r.steelWeight.toFixed(3)+' t</span></div><div class="oline"><span>Steel cost</span><span class="v">'+fmt(r.steelCost)+'</span></div><div class="oline"><span>Chairs</span><span class="v">'+fmt(r.chairCost)+'</span></div>';
+  h+=outBlock(cost,ol,r.buy.concat(r.chairLines),r.formworkCost)+'</div>';return h;}
+
+function excavationHtml(p,e,r,cost){const H=pcwHelpers(p,e);
+  const E=(f,isNum)=>'onchange="editElement('+p.id+','+e.id+',\''+f+'\',this.value'+(isNum?',true':'')+')"';
+  const opt=(v,cur,txt)=>'<option value="'+v+'"'+(String(cur)===String(v)?' selected':'')+'>'+txt+'</option>';
+  const isSoil=e.soil!==false;
+  const digs=excDigs(e);
+  let h=elHead('Excavation',p,e,cost)+'<div class="element-body">';
+  h+='<div class="hint" style="margin:-2px 0 10px">Standalone earthworks — no concrete needed. Add as many dig lines as you like (trenches, slab digs, piers). It works out the time, machine hire and only carts what isn\u2019t reused on site.</div>';
+  // material
+  h+='<div class="grid g5">'+
+    '<div class="field"><label class="fld">Material</label><select onchange="editElement('+p.id+','+e.id+',\'soil\',this.value===\'soil\')"><option value="soil"'+(isSoil?' selected':'')+'>Soil / spoil (1.8 t/m³)</option><option value="conc"'+(!isSoil?' selected':'')+'>Concrete break-out (2.4 t/m³)</option></select></div>'+
+    '</div>';
+  // ---- dig lines table ----
+  h+='<div class="sub-lbl">Dig lines — add a row for each different trench / area / set of piers</div>';
+  h+='<table class="dig-tbl" style="width:100%;border-collapse:collapse;margin-bottom:4px"><thead><tr style="font-family:var(--disp);text-transform:uppercase;letter-spacing:.5px;font-size:11px;color:var(--ink-soft)">'+
+     '<th style="text-align:left;padding:4px 6px;width:130px">Type</th><th colspan="4" style="text-align:left;padding:4px 6px">Dimensions</th><th style="text-align:right;padding:4px 6px;width:70px">m³</th><th style="width:30px"></th></tr></thead><tbody>';
+  const dcell=(d,f,isNum,step)=>'<input class="num" style="width:100%" type="'+(isNum?'number':'text')+'"'+(step?' step="'+step+'"':'')+' value="'+(d[f]!=null?d[f]:'')+'" onchange="editDig('+p.id+','+e.id+','+d.id+',\''+f+'\',this.value'+(isNum?',true':'')+')">';
+  const lbl=t=>'<div style="font-size:10px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.5px">'+t+'</div>';
+  digs.forEach(d=>{
+    const typeSel='<select onchange="editDig('+p.id+','+e.id+','+d.id+',\'mode\',this.value)">'+opt('trench',d.mode,'Trench')+opt('area',d.mode,'Area × depth')+opt('pier',d.mode,'Piers / bores')+opt('manual',d.mode,'Manual m³')+'</select>';
+    let dims='';
+    if(d.mode==='area')dims='<td style="padding:3px 6px">'+lbl('Area m²')+dcell(d,'area',true)+'</td><td style="padding:3px 6px">'+lbl('Depth mm')+dcell(d,'depth',true)+'</td><td></td><td></td>';
+    else if(d.mode==='pier')dims='<td style="padding:3px 6px">'+lbl('No.')+dcell(d,'count',true)+'</td><td style="padding:3px 6px">'+lbl('Dia mm')+dcell(d,'dia',true)+'</td><td style="padding:3px 6px">'+lbl('Depth m')+dcell(d,'pdepth',true,0.1)+'</td><td></td>';
+    else if(d.mode==='manual')dims='<td style="padding:3px 6px">'+lbl('Volume m³')+dcell(d,'vol',true,0.1)+'</td><td></td><td></td><td></td>';
+    else dims='<td style="padding:3px 6px">'+lbl('Width mm')+dcell(d,'w',true)+'</td><td style="padding:3px 6px">'+lbl('Depth mm')+dcell(d,'d',true)+'</td><td style="padding:3px 6px">'+lbl('Length m')+dcell(d,'l',true,0.1)+'</td><td style="padding:3px 6px">'+lbl('Qty')+dcell(d,'qty',true)+'</td>';
+    h+='<tr style="border-top:1px solid var(--line)"><td style="padding:3px 6px;vertical-align:bottom">'+typeSel+'</td>'+dims+
+       '<td style="text-align:right;padding:3px 6px;vertical-align:bottom;font-family:var(--mono)">'+digVol(d).toFixed(2)+'</td>'+
+       '<td style="text-align:center;vertical-align:bottom"><button class="x-btn" onclick="removeDig('+p.id+','+e.id+','+d.id+')">&times;</button></td></tr>';
+  });
+  h+='</tbody></table>';
+  h+='<div class="btn-row" style="margin:2px 0 10px"><button class="btn ghost sm" onclick="addDig('+p.id+','+e.id+')">+ Dig line</button><span class="pill" style="margin-left:auto">total dig '+r.bankVol.toFixed(2)+' m³</span></div>';
+  // cut & fill
+  h+='<div class="sub-lbl">Cut &amp; fill — what leaves site</div><div class="grid g5">'+
+    '<div class="field"><label class="fld">Remove spoil?</label><select onchange="editElement('+p.id+','+e.id+',\'removal\',this.value===\'yes\')"><option value="yes"'+(e.removal!==false?' selected':'')+'>Yes — cart away</option><option value="no"'+(e.removal===false?' selected':'')+'>No — stays on site</option></select></div>';
+  if(e.removal!==false){
+    h+='<div class="field"><label class="fld">Reuse on site by</label><select '+E('reuseMode')+'>'+opt('pct',e.reuseMode,'% of dig')+opt('vol',e.reuseMode,'m³')+'</select></div>'+
+      (e.reuseMode==='vol'?H.nf('Reuse (m³)','reuseVol',0.1):H.nf('Reuse (%)','reusePct'));
+  }
+  h+='</div>';
+  // job duration (drives labour + default machine days)
+  h+='<div class="sub-lbl">Job duration — drives labour &amp; default machine days</div><div class="grid g5">'+
+    '<div class="field"><label class="fld">Duration</label><select onchange="editElement('+p.id+','+e.id+',\'autoDays\',this.value===\'auto\')"><option value="auto"'+(e.autoDays!==false?' selected':'')+'>Auto from volume</option><option value="manual"'+(e.autoDays===false?' selected':'')+'>Set manually</option></select></div>'+
+    (e.autoDays===false?H.nf('Job days','hireDays',0.5):'<div class="field"><label class="fld">Productivity (m³/day, blank=default)</label><input class="num" type="number" value="'+(e.prodOverride||'')+'" '+E('prodOverride',true)+'></div>')+
+    '<div class="field"><label class="fld">Works out to</label><input value="'+r.days+' day'+(r.days==1?'':'s')+'" disabled></div>'+
+    '</div>';
+  // machines list
+  const ME=(mid,f,val)=>'onchange="editMachine('+p.id+','+e.id+','+mid+',\''+f+'\',this.value)"';
+  const MEb=(mid,f)=>'onchange="editMachine('+p.id+','+e.id+','+mid+',\''+f+'\',this.value===\'yes\',\'bool\')"';
+  const MEn=(mid,f)=>'onchange="editMachine('+p.id+','+e.id+','+mid+',\''+f+'\',this.value,\'num\')"';
+  h+='<div class="sub-lbl">Machines — add as many as you\u2019re running (1.6T, 5T, bobcat)</div>';
+  excMachines(e).forEach(function(mm,mi){const md=r.machineDetail[mi];
+    const jobD=r.days;const mDaysShown=(mm.autoDays===false)?(mm.days||0):jobD;
+    h+='<div style="border:1px solid var(--line);border-radius:4px;padding:8px 10px;margin-bottom:8px;background:var(--panel-2)">';
+    h+='<div class="grid g5">'+
+      '<div class="field"><label class="fld">Machine</label><select '+ME(mm.id,'type')+'>'+opt('1.6T',mm.type,'1.6T (owned)')+opt('5T',mm.type,'5T excavator')+opt('bobcat',mm.type,'Bobcat')+'</select></div>'+
+      '<div class="field"><label class="fld">Charge?</label><select onchange="editMachine('+p.id+','+e.id+','+mm.id+',\'on\',this.value===\'yes\',\'bool\')"><option value="yes"'+(mm.on!==false?' selected':'')+'>Yes</option><option value="no"'+(mm.on===false?' selected':'')+'>No (client\u2019s)</option></select></div>'+
+      '<div class="field"><label class="fld">Hire basis</label><select '+ME(mm.id,'basis')+'>'+opt('day',mm.basis,'Daily')+opt('week',mm.basis,'Weekly')+'</select></div>'+
+      '<div class="field"><label class="fld">Days</label><select onchange="editMachine('+p.id+','+e.id+','+mm.id+',\'autoDays\',this.value===\'auto\',\'bool\')"><option value="auto"'+(mm.autoDays!==false?' selected':'')+'>Match job ('+jobD+')</option><option value="manual"'+(mm.autoDays===false?' selected':'')+'>Own</option></select></div>'+
+      (mm.autoDays===false?'<div class="field"><label class="fld">Machine days</label><input class="num" type="number" step="0.5" value="'+(mm.days||'')+'" '+MEn(mm.id,'days')+'></div>':'<div class="field"><label class="fld">Float (trips)</label><input class="num" type="number" value="'+(mm.floatTrips!=null?mm.floatTrips:2)+'" '+MEn(mm.id,'floatTrips')+'></div>')+
+      '</div>';
+    h+='<div class="grid g5" style="margin-top:8px">'+
+      (mm.autoDays===false?'<div class="field"><label class="fld">Float (trips)</label><input class="num" type="number" value="'+(mm.floatTrips!=null?mm.floatTrips:2)+'" '+MEn(mm.id,'floatTrips')+'></div>':'')+
+      '<div class="field"><label class="fld">Rock hammer?</label><select onchange="editMachine('+p.id+','+e.id+','+mm.id+',\'hammer\',this.value===\'yes\',\'bool\')"><option value="no"'+(!mm.hammer?' selected':'')+'>No</option><option value="yes"'+(mm.hammer?' selected':'')+'>Yes</option></select></div>'+
+      (mm.hammer?'<div class="field"><label class="fld">Hammer days (blank='+mDaysShown+')</label><input class="num" type="number" step="0.5" value="'+(mm.hammerDays||'')+'" '+MEn(mm.id,'hammerDays')+'></div>':'')+
+      '<div class="field"><label class="fld">Auger?</label><select onchange="editMachine('+p.id+','+e.id+','+mm.id+',\'auger\',this.value===\'yes\',\'bool\')"><option value="no"'+(!mm.auger?' selected':'')+'>No</option><option value="yes"'+(mm.auger?' selected':'')+'>Yes</option></select></div>'+
+      (mm.auger?'<div class="field"><label class="fld">Auger days (blank='+mDaysShown+')</label><input class="num" type="number" step="0.5" value="'+(mm.augerDays||'')+'" '+MEn(mm.id,'augerDays')+'></div>':'')+
+      '<div class="field" style="display:flex;align-items:flex-end;justify-content:space-between"><span class="num" style="font-weight:600">'+(md?fmt(md.c):'$0.00')+'</span>'+(excMachines(e).length>1?'<button class="x-btn" onclick="removeMachine('+p.id+','+e.id+','+mm.id+')">&times;</button>':'')+'</div>'+
+      '</div></div>';
+  });
+  h+='<div class="btn-row" style="margin:2px 0 10px"><button class="btn ghost sm" onclick="addMachine('+p.id+','+e.id+',\'1.6T\')">+ 1.6T</button><button class="btn ghost sm" onclick="addMachine('+p.id+','+e.id+',\'5T\')">+ 5T</button><button class="btn ghost sm" onclick="addMachine('+p.id+','+e.id+',\'bobcat\')">+ Bobcat</button><span class="pill" style="margin-left:auto">machines '+fmt(r.machineCost)+'</span></div>';
+  // labour + disposal
+  h+='<div class="sub-lbl">Labour &amp; disposal</div><div class="grid g5">'+
+    '<div class="field"><label class="fld">Labour</label><select onchange="editElement('+p.id+','+e.id+',\'labourUnit\',this.value)">'+opt('auto',e.labourUnit,'Auto — days × crew')+opt('days',e.labourUnit,'Manual man-days')+opt('hours',e.labourUnit,'Manual man-hours')+'</select></div>'+
+    (e.labourUnit==='days'?H.nf('Man-days','labourVal',0.5)
+      :e.labourUnit==='hours'?'<div class="field"><label class="fld">Man-hours (8 = 1 day)</label><input class="num" type="number" step="0.5" value="'+(e.labourVal||'')+'" '+E('labourVal',true)+'></div>'
+      :H.nf('Crew (men on site)','crew'))+
+    (e.removal!==false?'<div class="field"><label class="fld">Disposal</label><select '+E('disposalMethod')+'>'+opt('none',e.disposalMethod,'None')+opt('skip6',e.disposalMethod,'6m³ skips')+opt('skip4',e.disposalMethod,'4m³ skips')+opt('tipper',e.disposalMethod,'Tipper truck (6T)')+opt('bogie',e.disposalMethod,'Bogie truck (12T)')+'</select></div>':'')+
+    (e.removal!==false&&e.disposalMethod&&e.disposalMethod!=='none'?'<div class="field"><label class="fld">Loads (blank=auto '+r.dispAuto+')</label><input class="num" type="number" value="'+(e.dispQtyOverride||'')+'" '+E('dispQtyOverride',true)+'></div>':'')+
+    '</div>';
+  // import fill
+  const imps=excImports(e);
+  h+='<div class="sub-lbl">Import fill — road base, blue metal, sand brought in (optional)</div>';
+  if(imps.length){h+='<table style="width:100%;border-collapse:collapse;margin-bottom:4px"><thead><tr style="font-family:var(--disp);text-transform:uppercase;letter-spacing:.5px;font-size:10px;color:var(--ink-soft)"><th style="text-align:left;padding:2px 6px">Material</th><th style="padding:2px 6px;width:90px">m³</th><th style="padding:2px 6px;width:80px">t/m³</th><th style="padding:2px 6px;width:90px;text-align:right">≈ tonnes</th><th style="padding:2px 6px;text-align:right;width:90px">Cost</th><th style="width:28px"></th></tr></thead><tbody>';
+    imps.forEach(function(im){const unit=num((state.prices.fill_data||{})[im.mat]);const dens=num(im.density)>0?num(im.density):fillDensity(im.mat);const t=num(im.vol)*dens;
+      h+='<tr style="border-top:1px solid var(--line)"><td style="padding:3px 6px"><select style="width:100%" onchange="editImport('+p.id+','+e.id+','+im.id+',\'mat\',this.value)">'+fillOptions(im.mat)+'</select></td>'+
+        '<td style="padding:3px 6px"><input class="num" style="width:100%" type="number" step="0.1" placeholder="m³" value="'+(im.vol||'')+'" onchange="editImport('+p.id+','+e.id+','+im.id+',\'vol\',this.value,true)"></td>'+
+        '<td style="padding:3px 6px"><input class="num" style="width:100%" type="number" step="0.05" value="'+dens+'" onchange="editImport('+p.id+','+e.id+','+im.id+',\'density\',this.value,true)"></td>'+
+        '<td style="padding:3px 6px;text-align:right;font-family:var(--mono);font-weight:600">'+t.toFixed(1)+' t</td>'+
+        '<td style="padding:3px 6px;text-align:right;font-family:var(--mono)">'+fmt(num(im.vol)*unit)+'</td>'+
+        '<td style="text-align:center"><button class="x-btn" onclick="removeImport('+p.id+','+e.id+','+im.id+')">&times;</button></td></tr>';});
+    h+='</tbody></table>';}
+  h+='<div class="btn-row" style="margin:2px 0 10px"><button class="btn ghost sm" onclick="addImport('+p.id+','+e.id+')">+ Import fill</button>'+(r.fillCost>0?'<span class="pill" style="margin-left:auto">fill '+r.fillTonnes.toFixed(1)+' t · '+fmt(r.fillCost)+'</span>':'')+'</div>';
+  h+=extraLabRow(p,e);
+  // output
+  h+='<details class="el-details"><summary>Detail &amp; buy list — '+fmt(cost)+'</summary><div class="element-out">';
+  h+='<div class="oline"><span>Dig volume ('+escapeHtml(r.desc)+')</span><span class="v">'+r.bankVol.toFixed(2)+' m³</span></div>';
+  if(r.reused>0)h+='<div class="oline"><span>Reused on site</span><span class="v">'+r.reused.toFixed(2)+' m³</span></div>';
+  h+='<div class="oline"><span>'+(r.noRemoval?'Cart away (none — stays on site)':'Cart away ('+(r.isSoil?'soil':'concrete')+')')+'</span><span class="v">'+r.disposeVol.toFixed(2)+' m³ · '+r.weight.toFixed(1)+' t</span></div>';
+  h+='<div class="oline"><span>Duration'+(e.autoDays!==false?' (≈'+r.effProd.toFixed(0)+' m³/day'+(r.anyHammer?', hammer-slowed':'')+')':'')+'</span><span class="v">'+r.days+' day'+(r.days==1?'':'s')+'</span></div>';
+  r.machineDetail.forEach(function(md){h+='<div class="oline"><span>'+escapeHtml(md.pre)+(md.on?'':' (client\u2019s — not charged)')+' — '+md.mDays+'d @ '+fmt(md.rate)+(md.flt?' + float '+fmt(md.flt):'')+(md.ham?' + hammer '+md.hamD+'d':'')+(md.aug?' + auger '+md.augD+'d':'')+'</span><span class="v">'+fmt(md.c)+'</span></div>';});
+  h+='<div class="oline"><span>Disposal'+(r.dispKind?' ('+r.dispQty+' × '+escapeHtml(r.dispKind)+')':'')+'</span><span class="v">'+fmt(r.disposalCost)+'</span></div>';
+  if(r.fillCost>0)h+='<div class="oline"><span>Import fill (≈ '+r.fillTonnes.toFixed(1)+' t to order)</span><span class="v">'+fmt(r.fillCost)+'</span></div>';
+  h+='<div class="oline"><span>Labour ('+escapeHtml(r.labourNote)+')</span><span class="v">'+r.autoMd.toFixed(2)+' md</span></div>';
+  h+='<h5>Buy list</h5><div class="buylist">'+r.buy.map(escapeHtml).join('<br>')+'</div></div></details></div>';
+  return h;}
+
+/* ---------- RECALC / QUOTE ---------- */
+const CHARGE_CATS=[['concrete','Concrete'],['pump','Pump'],['steel','Steel & mesh'],['formwork','Formwork'],['machine','Machine hire'],['disposal','Cartage'],['fill','Import fill'],['labour','Labour']];
+function chargeOn(k){const c=state.q.charge||{};return c[k]!==false;}
+function toggleCharge(k,v){if(!state.q.charge)state.q.charge={};state.q.charge[k]=v;recalc();saveState();}
+function renderChargeBox(cat){const box=$('chargeBox');if(!box)return;const anyOff=CHARGE_CATS.some(([k])=>!chargeOn(k));
+  let chips=CHARGE_CATS.map(([k,lbl])=>{const on=chargeOn(k);const val=cat?cat[k]:0;
+    return '<label class="chk" style="display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid '+(on?'var(--line-strong)':'var(--brick)')+';border-radius:20px;'+(on?'':'opacity:.75;background:#f6ecea')+'">'+
+      '<input type="checkbox" '+(on?'checked':'')+' onchange="toggleCharge(\''+k+'\',this.checked)"> '+lbl+(val>0?' <span class="num" style="color:var(--ink-soft)">'+fmt(val)+'</span>':'')+'</label>';}).join('');
+  box.innerHTML='<label class="fld">Charge for these? (untick anything the client is supplying — it stays calculated but drops out of the quote)</label>'+
+    '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">'+chips+'</div>'+
+    (anyOff?'<div class="hint" style="margin-top:8px;color:var(--brick)">Client-supplied items are excluded from the charge and shown struck-through on the quote.</div>':'');}
+function recalc(){collectJob();let conc=0,steel=0,md=0;
+  const cat={concrete:0,pump:0,steel:0,formwork:0,machine:0,disposal:0,fill:0,labour:0};let poursTotal=0;
+  state.pours.forEach(p=>{const pr=calcPour(p);poursTotal+=pr.total;conc+=pr.concVol;md+=pr.manDays;
+    cat.concrete+=pr.concCost;cat.pump+=pr.pumpCost;cat.steel+=pr.steelCost+pr.chairCost;cat.formwork+=pr.fwCost;cat.machine+=pr.machineCost;cat.disposal+=pr.disposalCost;cat.fill+=pr.fillCost;cat.labour+=pr.labourCost;
+    p.elements.forEach(e=>{if(e._r)steel+=(e._r.steelWeight||0);});steel+=(p.extraSteel||0);});
+  const addcost=num(state.q.addcost);
+  let fullCost=addcost,chargedCost=addcost;
+  Object.keys(cat).forEach(k=>{fullCost+=cat[k];if(chargeOn(k))chargedCost+=cat[k];});
+  const excluded=fullCost-chargedCost;
+  const cost=chargedCost;
+  const markup=cost*(state.q.markup/100);const afterMk=cost+markup+num(state.q.adj);
+  const gst=afterMk*(state.q.gst/100);const quote=afterMk+gst;
+  $('dock_pours').textContent=state.pours.length;$('dock_conc').textContent=conc.toFixed(2)+' m³';
+  $('dock_steel').textContent=steel.toFixed(2)+' t';$('dock_md').textContent=md.toFixed(1);
+  $('dock_cost').textContent=fmt(cost);$('dock_quote').textContent=fmt(quote);const dx=$('dock_exgst');if(dx)dx.textContent=fmt(afterMk);
+  const labourCharged=chargeOn('labour')?cat.labour:0;const materialsCharged=cost-labourCharged;
+  const dm=$('dock_materials');if(dm)dm.textContent=fmt(materialsCharged);
+  const dlb=$('dock_labour');if(dlb)dlb.textContent=fmt(labourCharged);
+  const dl=$('dock_cost_lbl');if(dl)dl.textContent=excluded>0.005?'Our cost':'Total cost';
+  state._calc={cost,fullCost,chargedCost,excluded,markup,afterMk,gst,quote,cat};
+  renderChargeBox(cat);renderParts();renderPartsBySection();renderLabour();}
+
+const PRICE_TITLES={concrete_mixes_data:"Concrete mixes ($/m³)",steel_data:"Steel — tonnage ($/t) & mesh ($/sheet)",steel_additions_data:"Chairs & additions ($/pack)",formwork_data:"Formwork ($/unit)",machine_hire_data:"Machine hire — excavator, bobcat, float & attachments",disposal_data:"Disposal — skips & trucks (mixed = soil, masonry = concrete)",fill_data:"Import fill — road base, blue metal, sand ($/m³ delivered)"};
+function renderPrices(){const wrap=$('pricesEditor');wrap.innerHTML='';Object.keys(state.prices).forEach(cat=>{const div=document.createElement('div');div.className='price-cat';
+  let rows=Object.keys(state.prices[cat]).map(k=>'<tr><td>'+escapeHtml(k)+'</td><td style="text-align:right"><input class="num" value="'+state.prices[cat][k]+'" onchange="editPrice(&#39;'+cat+'&#39;,&#39;'+escapeAttr(k)+'&#39;,this.value)"></td></tr>').join('');
+  div.innerHTML='<h3>'+(PRICE_TITLES[cat]||cat)+'</h3><table class="prices"><tbody>'+rows+'</tbody></table>';wrap.appendChild(div);});}
+function editPrice(cat,key,val){state.prices[cat][key]=num(val);renderPours();recalc();saveState();}
+function resetPrices(){if(confirm('Reset prices to defaults?')){state.prices=JSON.parse(JSON.stringify(DEFAULT_PRICES));renderPrices();renderPours();recalc();saveState();}}
+
+function saveFile(){collectJob();const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);const nm=(state.job.number||'quote').replace(/[^\w-]/g,'_');a.download='RESET_'+nm+'.json';a.click();toast('Saved');}
+function reindex(){uid=1;state.pours.forEach(p=>{p.id=nextId();(p.elements||[]).forEach(e=>{e.id=nextId();(e.shape||[]).forEach(s=>s.id=nextId());(e.additions||[]).forEach(a=>a.id=nextId());});});}
+function loadFile(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const s=JSON.parse(r.result);
+  state.job=s.job||{};state.q=Object.assign({markup:40,addcost:0,adj:0,gst:10,notes:''},s.q||{});state.q.charge=Object.assign({concrete:true,pump:true,steel:true,formwork:true,labour:true,machine:true,disposal:true,fill:true},(s.q&&s.q.charge)||{});state.settings=Object.assign(state.settings,s.settings||{});state.settings.areaBand=Object.assign({},DEFAULT_AREABAND,state.settings.areaBand||{});state.prices=s.prices||state.prices;['formwork_data','machine_hire_data','disposal_data','fill_data'].forEach(cat=>{if(!state.prices[cat])state.prices[cat]={};Object.keys(DEFAULT_PRICES[cat]).forEach(k=>{if(state.prices[cat][k]==null)state.prices[cat][k]=DEFAULT_PRICES[cat][k];});});state.pours=s.pours||[];
+  reindex();fillJob();renderPrices();renderPours();recalc();saveState();toast('Loaded');}catch(err){alert('Could not read that file.');}};r.readAsText(f);ev.target.value='';}
+function newJob(){if(!confirm('Start a new job? Pours clear (prices & rates kept).'))return;state.job={};state.q={markup:40,addcost:0,adj:0,gst:10,notes:'',charge:{concrete:true,pump:true,steel:true,formwork:true,labour:true,machine:true,disposal:true,fill:true}};state.pours=[];fillJob();addPour();recalc();saveState();showTab('job');}
+
+function printQuote(){collectJob();recalc();const j=state.job,c=state._calc;let rows='';
+  state.pours.forEach(p=>{const pr=calcPour(p);rows+='<tr><td><strong>'+escapeHtml(p.name)+'</strong> — '+escapeHtml(p.mix)+', '+(p.elements.map(e=>escapeHtml(e.label)).join(', ')||'—')+'</td><td class="r">'+pr.concVol.toFixed(2)+' m³</td><td class="r">'+pr.manDays.toFixed(1)+' md</td><td class="r">'+fmt(pr.total)+'</td></tr>';});
+  $('printArea').innerHTML='<div class="quote-doc"><div class="qh"><div class="co">RESET<small>CONCRETE</small></div><div style="text-align:right;font-size:13px;line-height:1.6"><strong>QUOTATION</strong><br>Quote #: '+escapeHtml(j.number||'—')+'<br>Date: '+escapeHtml(j.date||'')+'</div></div>'+
+    '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><div><strong>To:</strong> '+escapeHtml(j.client||'')+'<br>'+escapeHtml(j.contact||'')+'</div><div style="text-align:right"><strong>Site:</strong> '+escapeHtml(j.site||'')+'</div></div>'+
+    (j.desc?'<div style="font-size:13px;margin-bottom:6px"><strong>Job:</strong> '+escapeHtml(j.desc)+'</div>':'')+
+    '<h4>Pours</h4><table><thead><tr><th>Pour / scope</th><th class="r">Concrete</th><th class="r">Labour</th><th class="r">Cost</th></tr></thead><tbody>'+(rows||'<tr><td colspan=4>No pours</td></tr>')+'</tbody></table>'+
+    (c.excluded>0.005?'<h4>Supplied by client (not charged)</h4><table><tbody>'+CHARGE_CATS.filter(([k])=>!chargeOn(k)&&c.cat[k]>0.005).map(([k,lbl])=>'<tr><td style="text-decoration:line-through;color:#888">'+lbl+'</td><td class="r" style="text-decoration:line-through;color:#888">'+fmt(c.cat[k])+'</td></tr>').join('')+'<tr><td><strong>Full value of works</strong></td><td class="r"><strong>'+fmt(c.fullCost)+'</strong></td></tr></tbody></table>':'')+
+    '<div class="totals"><div class="tr"><span>'+(c.excluded>0.005?'Our scope (cost)':'Total cost')+'</span><span>'+fmt(c.cost)+'</span></div>'+(state.q.markup?'<div class="tr"><span>Margin ('+state.q.markup+'%)</span><span>'+fmt(c.markup)+'</span></div>':'')+(state.q.adj?'<div class="tr"><span>Additional</span><span>'+fmt(state.q.adj)+'</span></div>':'')+'<div class="tr"><span><strong>Quote (ex GST)</strong></span><span><strong>'+fmt(c.afterMk)+'</strong></span></div><div class="tr"><span>GST ('+state.q.gst+'%)</span><span>'+fmt(c.gst)+'</span></div><div class="tr grand"><span>Quote (inc GST)</span><span>'+fmt(c.quote)+'</span></div></div>'+
+    (state.q.notes?'<div class="note">'+escapeHtml(state.q.notes)+'</div>':'')+'</div>';window.print();}
+
+/* ---------- PARTS LIST ---------- */
+const GDISP={Concrete:'Concrete',Reinforcement:'Steel',Formwork:'Formwork',Machine:'Machine hire',Disposal:'Cartage & disposal',Fill:'Import fill'};
+const PGROUPS=['Concrete','Reinforcement','Formwork','Machine','Disposal','Fill'];
+function partsFilter(){if(!state._pf)state._pf={Concrete:true,Reinforcement:true,Formwork:true,Machine:true,Disposal:true,Fill:true};if(state._pf.Machine==null){state._pf.Machine=true;state._pf.Disposal=true;}if(state._pf.Fill==null)state._pf.Fill=true;return state._pf;}
+function togglePF(g,v){partsFilter()[g]=v;renderParts();renderPartsBySection();}
+function collectRows(){const rows=[];
+  state.pours.forEach(p=>{const pr=calcPour(p);
+    p.elements.forEach(e=>{const r=e._r||calcElement(e);
+      (r.concSections||[]).forEach(cs=>{if(Math.abs(cs.vol)>1e-9)rows.push({pourId:p.id,pourName:p.name,sec:cs.sec,g:'Concrete',k:p.mix,u:'m³',q:cs.vol,c:cs.vol*pr.mixRate});});
+      (r.parts||[]).forEach(pt=>rows.push({pourId:p.id,pourName:p.name,sec:pt.sec||e.label,g:pt.g,k:pt.k,u:pt.u,q:pt.q,c:pt.c}));
+    });
+    if((p.extraConc||0)>0)rows.push({pourId:p.id,pourName:p.name,sec:p.name+' · Extra concrete',g:'Concrete',k:p.mix,u:'m³',q:p.extraConc,c:p.extraConc*pr.mixRate});
+    if((p.extraSteel||0)>0)rows.push({pourId:p.id,pourName:p.name,sec:p.name+' · Extra steel',g:'Reinforcement',k:'Extra steel',u:'t',q:p.extraSteel,c:p.extraSteel*tonnage()});
+  });return rows;}
+function aggRows(rows){const map={};rows.forEach(r=>{const key=r.g+'|'+r.k+'|'+r.u;if(!map[key])map[key]={g:r.g,k:r.k,u:r.u,q:0,c:0};map[key].q+=r.q;map[key].c+=r.c;});return map;}
+function groupTables(map){let html='',grand=0;const f=partsFilter();
+  PGROUPS.forEach(g=>{if(!f[g])return;const items=Object.values(map).filter(m=>m.g===g).sort((a,b)=>a.k.localeCompare(b.k));if(!items.length)return;let sub=0;
+    const rows=items.map(m=>{sub+=m.c;const qty=Math.round(m.q*100)/100;return '<tr><td>'+escapeHtml(m.k)+'</td><td style="text-align:right">'+qty+'</td><td>'+escapeHtml(m.u)+'</td><td style="text-align:right">'+fmt(m.c)+'</td></tr>';}).join('');grand+=sub;
+    html+='<div class="price-cat"><h3>'+GDISP[g]+' — '+fmt(sub)+'</h3><table class="prices"><thead><tr><th>Item</th><th style="text-align:right">Qty</th><th>Unit</th><th style="text-align:right">Cost</th></tr></thead><tbody>'+rows+'</tbody></table></div>';});
+  return {html,grand};}
+function filterBar(){const f=partsFilter();return '<div class="btn-row" style="margin-bottom:12px;gap:16px">'+
+  PGROUPS.map(g=>'<label class="chk"><input type="checkbox" '+(f[g]?'checked':'')+' onchange="togglePF(\''+g+'\',this.checked)"> Show '+GDISP[g]+'</label>').join('')+'</div>';}
+function partsFootnote(g){return '<div class="element-out" style="margin-top:14px"><div class="oline" style="font-weight:700;font-size:15px"><span>Materials total (ex labour, markup, GST)</span><span class="v">'+fmt(g)+'</span></div><div class="hint" style="margin-top:6px;color:#DCE2E6">Formwork reusable gear costed at '+state.settings.newFormworkPct+'% new; class-2 ply &amp; pickets at full. Quantities = full amount required on site.</div></div>';}
+function renderParts(){const wrap=$('partsWrap');if(!wrap)return;const rows=collectRows();
+  if(!rows.length){wrap.innerHTML='<p class="sub" style="margin:0">No pours yet — add elements to build a parts list.</p>';return;}
+  const {html,grand}=groupTables(aggRows(rows));wrap.innerHTML=filterBar()+html+partsFootnote(grand);}
+function renderPartsBySection(){const wrap=$('partsSecWrap');if(!wrap)return;const rows=collectRows();
+  if(!rows.length){wrap.innerHTML='<p class="sub" style="margin:0">No pours yet — add elements to build a parts list.</p>';return;}
+  const byPour={};rows.forEach(r=>{(byPour[r.pourId]||(byPour[r.pourId]={name:r.pourName,secs:{}}));(byPour[r.pourId].secs[r.sec]||(byPour[r.pourId].secs[r.sec]=[])).push(r);});
+  let html=filterBar(),job=0;
+  Object.keys(byPour).forEach(pid=>{const P=byPour[pid];let pourTotal=0,secHtml='';
+    Object.keys(P.secs).sort().forEach(sec=>{const {html:th,grand:sg}=groupTables(aggRows(P.secs[sec]));if(!th)return;pourTotal+=sg;
+      secHtml+='<details class="sec-details" style="margin:6px 0 6px 16px;border-left:2px solid var(--line-strong);padding-left:12px"><summary style="cursor:pointer;padding:5px 0;font-family:var(--disp);text-transform:uppercase;letter-spacing:0.5px;font-size:13px">'+escapeHtml(sec)+' — '+fmt(sg)+'</summary>'+th+'</details>';});
+    job+=pourTotal;
+    html+='<details class="pour-details" open style="border:1px solid var(--line-strong);border-radius:4px;margin-bottom:12px;padding:10px 14px;background:#fff"><summary style="cursor:pointer;font-weight:700;font-size:16px;color:var(--steel-ink)">'+escapeHtml(P.name)+' — '+fmt(pourTotal)+'</summary>'+(secHtml||'<p class="sub">Nothing in the selected filters.</p>')+'</details>';});
+  wrap.innerHTML=html+partsFootnote(job);}
+function labourBasisLabel(pr){return pr.labourBasis==='area'?('slab m² band — '+pr.slabArea.toFixed(1)+' m²'):((pr.labourBasis==='pct'||pr.labourBasis==='pct-fallback')?('% of materials — '+pr.pct+'%'+(pr.labourBasis==='pct-fallback'?' (no slab)':'')):'manual man-days');}
+function renderLabour(){const wrap=$('labourWrap');if(!wrap)return;
+  if(!state.pours.length){wrap.innerHTML='<p class="sub" style="margin:0">No pours yet — add pours to see the labour breakdown.</p>';return;}
+  const rate=state.settings.manDayRate;let html='',totMd=0,totCost=0;
+  state.pours.forEach(function(p){const pr=calcPour(p);
+    const baseMd=Math.max(0,pr.manDays-pr.extraMd),baseCost=baseMd*rate;
+    let rows='<tr><td>Base labour ('+labourBasisLabel(pr)+')</td><td style="text-align:right">'+baseMd.toFixed(2)+'</td><td style="text-align:right">'+fmt(baseCost)+'</td></tr>';
+    p.elements.forEach(function(e){const r=e._r||calcElement(e);let extra=num(e.labMen)*num(e.labDays)+(r.autoMd||0);(e.additions||[]).forEach(function(a){extra+=num(a.labMen)*num(a.labDays);});
+      if(extra>1e-9)rows+='<tr><td style="padding-left:18px;color:var(--ink-soft)">'+escapeHtml(e.label)+(e.type==='excavation'?' — excavation crew':' — extra')+'</td><td style="text-align:right">'+extra.toFixed(2)+'</td><td style="text-align:right">'+fmt(extra*rate)+'</td></tr>';});
+    totMd+=pr.manDays;totCost+=pr.labourCost;
+    html+='<div class="price-cat"><h3>'+escapeHtml(p.name)+' — '+pr.manDays.toFixed(1)+' md · '+fmt(pr.labourCost)+'</h3><table class="prices"><thead><tr><th>Labour</th><th style="text-align:right">Man-days</th><th style="text-align:right">Cost</th></tr></thead><tbody>'+rows+'</tbody></table></div>';});
+  html+='<div class="element-out" style="margin-top:14px"><div class="oline" style="font-weight:700;font-size:15px"><span>Total labour — '+totMd.toFixed(1)+' man-days @ '+fmt(rate)+'/day</span><span class="v">'+fmt(totCost)+'</span></div></div>';
+  wrap.innerHTML=html;}
+function printLabour(){collectJob();recalc();const rate=state.settings.manDayRate;const j=state.job;let body='',totMd=0,totCost=0;
+  state.pours.forEach(function(p){const pr=calcPour(p);const baseMd=Math.max(0,pr.manDays-pr.extraMd);
+    let rows='<tr><td>Base ('+labourBasisLabel(pr)+')</td><td class="r">'+baseMd.toFixed(2)+'</td><td class="r">'+fmt(baseMd*rate)+'</td></tr>';
+    p.elements.forEach(function(e){const r=e._r||calcElement(e);let extra=num(e.labMen)*num(e.labDays)+(r.autoMd||0);(e.additions||[]).forEach(function(a){extra+=num(a.labMen)*num(a.labDays);});
+      if(extra>1e-9)rows+='<tr><td>'+escapeHtml(e.label)+(e.type==='excavation'?' (excavation)':' extra')+'</td><td class="r">'+extra.toFixed(2)+'</td><td class="r">'+fmt(extra*rate)+'</td></tr>';});
+    totMd+=pr.manDays;totCost+=pr.labourCost;
+    body+='<h4>'+escapeHtml(p.name)+' — '+pr.manDays.toFixed(1)+' md · '+fmt(pr.labourCost)+'</h4><table><thead><tr><th>Labour</th><th class="r">Man-days</th><th class="r">Cost</th></tr></thead><tbody>'+rows+'</tbody></table>';});
+  $('printArea').innerHTML='<div class="quote-doc"><div class="qh"><div class="co">RESET<small>CONCRETE</small></div><div style="text-align:right;font-size:13px;line-height:1.6"><strong>LABOUR BREAKDOWN</strong><br>Quote #: '+escapeHtml(j.number||'—')+'<br>Date: '+escapeHtml(j.date||'')+'</div></div>'+(body||'<p>No pours</p>')+'<div class="totals"><div class="tr grand"><span>Total labour ('+totMd.toFixed(1)+' md @ '+fmt(rate)+')</span><span>'+fmt(totCost)+'</span></div></div></div>';window.print();}
+function printParts(){collectJob();recalc();const {html:body,grand}=printGroupTables(aggRows(collectRows()));const j=state.job;
+  $('printArea').innerHTML='<div class="quote-doc"><div class="qh"><div class="co">RESET<small>CONCRETE</small></div><div style="text-align:right;font-size:13px;line-height:1.6"><strong>PARTS / ORDER LIST</strong><br>Quote #: '+escapeHtml(j.number||'—')+'<br>Date: '+escapeHtml(j.date||'')+(j.site?'<br>Site: '+escapeHtml(j.site):'')+'</div></div>'+(body||'<p>No items</p>')+'<div class="totals"><div class="tr grand"><span>Materials total</span><span>'+fmt(grand)+'</span></div></div><div class="note">Quantities are full site requirement. Formwork reusable gear costed at '+state.settings.newFormworkPct+'% new.</div></div>';window.print();}
+function printPartsBySection(){collectJob();recalc();const rows=collectRows();const byPour={};
+  rows.forEach(r=>{(byPour[r.pourId]||(byPour[r.pourId]={name:r.pourName,secs:{}}));(byPour[r.pourId].secs[r.sec]||(byPour[r.pourId].secs[r.sec]=[])).push(r);});
+  const j=state.job;let body='',job=0;
+  Object.keys(byPour).forEach(pid=>{const P=byPour[pid];let pourTotal=0,secBody='';
+    Object.keys(P.secs).sort().forEach(sec=>{const {html:th,grand:sg}=printGroupTables(aggRows(P.secs[sec]));if(!th)return;pourTotal+=sg;
+      secBody+='<div style="margin:6px 0 6px 10px"><strong>'+escapeHtml(sec)+'</strong> — '+fmt(sg)+th+'</div>';});
+    job+=pourTotal;body+='<h4>'+escapeHtml(P.name)+' — '+fmt(pourTotal)+'</h4>'+secBody;});
+  $('printArea').innerHTML='<div class="quote-doc"><div class="qh"><div class="co">RESET<small>CONCRETE</small></div><div style="text-align:right;font-size:13px;line-height:1.6"><strong>PARTS BY SECTION</strong><br>Quote #: '+escapeHtml(j.number||'—')+'<br>Date: '+escapeHtml(j.date||'')+'</div></div>'+(body||'<p>No items</p>')+'<div class="totals"><div class="tr grand"><span>Materials total</span><span>'+fmt(job)+'</span></div></div></div>';window.print();}
+function printGroupTables(map){let html='',grand=0;const f=partsFilter();
+  PGROUPS.forEach(g=>{if(!f[g])return;const items=Object.values(map).filter(m=>m.g===g).sort((a,b)=>a.k.localeCompare(b.k));if(!items.length)return;let sub=0;
+    const rows=items.map(m=>{sub+=m.c;return '<tr><td>'+escapeHtml(m.k)+'</td><td class="r">'+(Math.round(m.q*100)/100)+' '+escapeHtml(m.u)+'</td><td class="r">'+fmt(m.c)+'</td></tr>';}).join('');grand+=sub;
+    html+='<table><thead><tr><th>'+GDISP[g]+'</th><th class="r">Qty</th><th class="r">Cost</th></tr></thead><tbody>'+rows+'</tbody></table>';});
+  return {html,grand};}
+
+function init(){loadState();reindex();fillJob();renderPrices();renderBandEditor();if(state.pours.length===0)addPour();else renderPours();recalc();}
+init();
+</script>
+</body>
+</html>
