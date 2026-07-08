@@ -93,16 +93,16 @@ textarea{min-height:110px;}
     <h2>Excavation / removal</h2>
     <div class="check"><input id="excavation" type="checkbox"><label for="excavation">Excavation/removal?</label></div>
     <div id="excavation_panel" class="hidden">
-      <div class="note">If kerb &gt; 1, the calculator also includes concrete excavation. Calculate bins/trucks estimates an amount. Skip disposal rates are fixed in the calculator and are not editable on mobile.</div>
+      <div class="note">If kerb &gt; 1, the calculator also includes concrete excavation. Calculate bins/trucks estimates an amount. Skip and truck disposal rates are fixed in the calculator and are not editable on mobile.</div>
       <div class="grid four">
         <input id="masonry_4m3" value="500" type="hidden">
         <input id="masonry_6m3" value="600" type="hidden">
         <input id="mixed_4m3" value="1000" type="hidden">
         <input id="mixed_6m3" value="1200" type="hidden">
-        <div><label for="bogie_masonry">Bogie masonry (12T)</label><input id="bogie_masonry" data-save value="1050" type="number" step="any"></div>
-        <div><label for="tipper_masonry">Tipper masonry (6T)</label><input id="tipper_masonry" data-save value="500" type="number" step="any"></div>
-        <div><label for="bogie_mixed">Bogie mixed (12T)</label><input id="bogie_mixed" data-save value="800" type="number" step="any"></div>
-        <div><label for="tipper_mixed">Tipper mixed (6T)</label><input id="tipper_mixed" data-save value="650" type="number" step="any"></div>
+        <input id="bogie_masonry" value="1050" type="hidden">
+        <input id="tipper_masonry" value="500" type="hidden">
+        <input id="bogie_mixed" value="800" type="hidden">
+        <input id="tipper_mixed" value="650" type="hidden">
       </div>
       <h3>Excavation volume calculations</h3>
       <div class="grid four">
@@ -149,7 +149,7 @@ textarea{min-height:110px;}
 </main>
 <script>
 (function(){
-  const STORE_KEY = 'driveways-mobile-values-v3';
+  const STORE_KEY = 'driveways-mobile-values-v4';
   const JSON_FILENAME = 'Driveway_values.json';
   const HANDLE_DB = 'driveways-json-handle-v1';
   const HANDLE_STORE = 'handles';
@@ -199,8 +199,8 @@ textarea{min-height:110px;}
     ['thickness_mm','thickness_mm'], ['concrete_price','price_per_m3'], ['mesh_price','price_per_sheet'], ['bag_chairs_price','bag_chairs_price'],
     ['number_of_stairs','number_of_stairs'], ['avg_stair_length','avg_stair_length'], ['avg_tread_depth','avg_tread_depth'], ['avg_tread_height','avg_tread_height'], ['kerb','kerb'],
     ['base_pump_cost','base_pump_cost'], ['additional_hourly_rate','additional_hourly_rate'], ['pumped_m3_cost','pumped_m3_cost'], ['min_cartage_m3','min_cartage_m3'], ['min_cartage_cost','min_cartage_cost'],
-    ['man_day_cost','man_day_cost'], ['markup','markup'], ['masonry_4m3','masonry_4m3'], ['masonry_6m3','masonry_6m3'], ['mixed_4m3','mixed_4m3'], ['mixed_6m3','mixed_6m3'],
-    ['soil_thickness_mm','soil_thickness_mm'], ['concrete_excavation_thickness_mm','concrete_excavation_thickness_mm'], ['bogie_masonry','bogie_masonry'], ['tipper_masonry','tipper_masonry'], ['bogie_mixed','bogie_mixed'], ['tipper_mixed','tipper_mixed'],
+    ['man_day_cost','man_day_cost'], ['markup','markup'],
+    ['soil_thickness_mm','soil_thickness_mm'], ['concrete_excavation_thickness_mm','concrete_excavation_thickness_mm'],
     ['company_name','company_name'], ['company_contact','company_contact'], ['contact_phone','contact_phone'], ['contact_email','contact_email']
   ];
 
