@@ -4,4 +4,4 @@ A list of quoting tools.
 
 ## Tools
 
-- More tools will be added here.
+- [Reset Concrete Quoter](https://david-reset.github.io/Quoting-Tools/reset-quoter/)
