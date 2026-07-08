@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Driveways / Pathways Calculator</title>
+  <style>
+    :root{--bg:#f5f5f3;--card:#fff;--ink:#222;--muted:#666;--line:#ddd;--accent:#222;--danger:#a40000;--ok:#0b6b35}
+    *{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.35}
+    header{background:#222;color:white;padding:18px 22px} header h1{margin:0;font-size:22px} header p{margin:4px 0 0;color:#ddd}
+    main{max-width:1260px;margin:0 auto;padding:18px;display:grid;grid-template-columns:1fr 380px;gap:16px}
+    section,.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+    h2{font-size:16px;margin:0 0 10px;border-bottom:1px solid var(--line);padding-bottom:7px} h3{font-size:14px;margin:14px 0 8px;color:#333}
+    .grid{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:10px 12px}.grid.two{grid-template-columns:repeat(2,minmax(160px,1fr))}.grid.three{grid-template-columns:repeat(3,minmax(160px,1fr))}
+    label{display:block;font-weight:600;margin-bottom:4px} input,select,textarea{width:100%;border:1px solid #bbb;border-radius:6px;padding:7px;background:white;font:inherit} textarea{min-height:100px;resize:vertical}.check{display:flex;align-items:center;gap:8px;margin:8px 0}.check input{width:auto}.muted{color:var(--muted);font-size:12px}.note{background:#f7f7f7;border-left:4px solid #bbb;padding:8px 10px;margin:8px 0;color:#444}
+    button{border:0;border-radius:7px;padding:9px 12px;background:#222;color:white;font-weight:700;cursor:pointer}button.secondary{background:#666}button.light{background:#e8e8e8;color:#222;border:1px solid #ccc}button:hover{filter:brightness(.96)}.button-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .results{position:sticky;top:10px}.metric{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #eee;padding:8px 0}.metric strong{font-size:15px}.metric .value{text-align:right;font-weight:700}.big{font-size:20px}.error{color:var(--danger);font-weight:700;margin-top:8px}.ok{color:var(--ok);font-weight:700}.hidden{display:none!important}.inline{display:grid;grid-template-columns:1fr 90px;gap:8px}.full{grid-column:1/-1}
+    .quote-preview{display:none}.smallcaps{text-transform:uppercase;letter-spacing:.04em;font-size:11px;color:#666;font-weight:700}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}.footer-note{font-size:12px;color:#777;margin-top:12px}
+    @media(max-width:980px){main{grid-template-columns:1fr}.results{position:static}.grid,.grid.two,.grid.three{grid-template-columns:1fr 1fr}}@media(max-width:620px){.grid,.grid.two,.grid.three,.split{grid-template-columns:1fr}}
+    @media print{body{background:white}header,main>section:not(.printable),.results,.no-print{display:none!important}.printable>*:not(.quote-preview){display:none!important}.quote-preview{display:block!important;border:0;box-shadow:none;padding:0}.print-page{page-break-after:always;padding:24px}.print-page h1{font-size:24px;margin-bottom:4px}.print-page h2{border:0;margin-top:22px}.print-table{width:100%;border-collapse:collapse}.print-table td{border-bottom:1px solid #ddd;padding:6px 4px;vertical-align:top}.print-table td:first-child{font-weight:bold;width:42%}.print-notes{white-space:pre-wrap;border:1px solid #ddd;padding:10px;min-height:80px}.page-break{page-break-before:always}}
+  </style>
+</head>
+<body>
+<header><h1>Driveways / Pathways Calculator</h1><p>Save values for this app, and link one Driveway_values.json backup file for recovery.</p></header>
+<main>
+  <section class="printable">
+    <h2>Job setup</h2>
+    <div class="grid three">
+      <div class="check full"><input id="use_area" type="checkbox" checked><label for="use_area">Use area instead of dimensions?</label></div>
+      <div id="width_box"><label for="width">Width (m)</label><input id="width" type="number" step="any" value="0"></div>
+      <div id="length_box"><label for="length">Length (m)</label><input id="length" type="number" step="any" value="0"></div>
+      <div id="area_box"><label for="area_input">Area (m²)</label><input id="area_input" type="number" step="any" value="0"></div>
+      <div><label for="thickness_mm">Thickness (mm)</label><input id="thickness_mm" data-save value="100" type="number" step="any"></div>
+      <div><label for="edgeboard">Edgeboard (m)</label><input id="edgeboard" value="0" type="number" step="any"></div>
+      <div><label for="concrete_price">Concrete price per m³</label><input id="concrete_price" data-save value="280" type="number" step="any"></div>
+      <div><label for="min_cartage_m3">Minimum cartage up to m³</label><input id="min_cartage_m3" data-save value="3" type="number" step="any"></div>
+      <div><label for="min_cartage_cost">Minimum cartage cost per m³ short</label><input id="min_cartage_cost" data-save value="105" type="number" step="any"></div>
+      <div><label for="mesh_price">Mesh price per sheet</label><input id="mesh_price" data-save value="91" type="number" step="any"></div>
+      <div><label for="bag_chairs_price">Bag of chairs price</label><input id="bag_chairs_price" data-save value="20" type="number" step="any"></div>
+    </div>
+
+    <h2>Stairs and kerb</h2>
+    <div class="grid four">
+      <div><label for="number_of_stairs">Number of stairs</label><input id="number_of_stairs" data-save value="0" type="number" step="any"></div>
+      <div><label for="avg_stair_length">Average stair length (mm)</label><input id="avg_stair_length" data-save value="1000" type="number" step="any"></div>
+      <div><label for="avg_tread_depth">Average tread depth (mm)</label><input id="avg_tread_depth" data-save value="250" type="number" step="any"></div>
+      <div><label for="avg_tread_height">Average tread height (mm)</label><input id="avg_tread_height" data-save value="190" type="number" step="any"></div>
+      <div><label for="kerb">Kerb/gutter/layback (m)</label><input id="kerb" data-save value="0" type="number" step="any"></div>
+    </div>
+
+    <h2>Pump</h2>
+    <div class="grid four">
+      <div class="check full"><input id="pump" type="checkbox" checked><label for="pump">Pump?</label></div>
+      <div class="pump-field"><label for="base_pump_cost">Base pump cost (usually 4 hours)</label><input id="base_pump_cost" data-save value="600" type="number" step="any"></div>
+      <div class="pump-field"><label for="additional_hourly_rate">Additional hourly rate</label><input id="additional_hourly_rate" data-save value="180" type="number" step="any"></div>
+      <div class="pump-field"><label for="pumped_m3_cost">Pumped m³ cost</label><input id="pumped_m3_cost" data-save value="6" type="number" step="any"></div>
+      <div class="pump-field"><label for="pump_line_length">Length of line</label><input id="pump_line_length" value="0" type="number" step="any"></div>
+      <div class="check pump-field"><input id="pump_hard" type="checkbox"><label for="pump_hard">Bad terrain or over 60m?</label></div>
+    </div>
+
+    <h2>Excavation / removal</h2>
+    <div class="check"><input id="excavation" type="checkbox"><label for="excavation">Excavation/removal?</label></div>
+    <div id="excavation_panel" class="hidden">
+      <div class="note">If kerb &gt; 1, the original program always adds concrete excavation. Calculate bins/trucks estimates an amount; use notes to discuss removal and availability.</div>
+      <div class="grid four">
+        <div><label for="masonry_4m3">4m³ masonry skip cost (5T)</label><input id="masonry_4m3" data-save value="550" type="number" step="any"></div>
+        <div><label for="masonry_6m3">6m³ masonry skip cost (7T)</label><input id="masonry_6m3" data-save value="700" type="number" step="any"></div>
+        <div><label for="mixed_4m3">4m³ mixed skip cost (5T)</label><input id="mixed_4m3" data-save value="720" type="number" step="any"></div>
+        <div><label for="mixed_6m3">6m³ mixed skip cost (7T)</label><input id="mixed_6m3" data-save value="980" type="number" step="any"></div>
+        <div><label for="bogie_masonry">Bogie masonry (12T)</label><input id="bogie_masonry" data-save value="1050" type="number" step="any"></div>
+        <div><label for="tipper_masonry">Tipper masonry (6T)</label><input id="tipper_masonry" data-save value="500" type="number" step="any"></div>
+        <div><label for="bogie_mixed">Bogie mixed (12T)</label><input id="bogie_mixed" data-save value="800" type="number" step="any"></div>
+        <div><label for="tipper_mixed">Tipper mixed (6T)</label><input id="tipper_mixed" data-save value="650" type="number" step="any"></div>
+      </div>
+      <h3>Excavation volume calculations</h3>
+      <div class="grid four">
+        <div><label for="soil_area">Soil removal area (m²)</label><input id="soil_area" value="" type="number" step="any"></div>
+        <div><label for="soil_thickness_mm">Soil thickness (mm)</label><input id="soil_thickness_mm" data-save value="110" type="number" step="any"></div>
+        <div><label for="concrete_area">Concrete removal area (m²)</label><input id="concrete_area" value="" type="number" step="any"></div>
+        <div><label for="concrete_excavation_thickness_mm">Concrete removal thickness (mm)</label><input id="concrete_excavation_thickness_mm" data-save value="110" type="number" step="any"></div>
+      </div>
+      <div class="split">
+        <div><h3>Select type of skip and amount</h3><div class="inline"><select id="skip_type_1"><option></option><option>4m^3 masonry</option><option>6m^3 masonry</option><option>4m^3 mixed</option><option>6m^3 mixed</option></select><input id="skip_qty_1" type="number" step="1" value="0"></div><div class="inline" style="margin-top:8px"><select id="skip_type_2"><option></option><option>4m^3 masonry</option><option>6m^3 masonry</option><option>4m^3 mixed</option><option>6m^3 mixed</option></select><input id="skip_qty_2" type="number" step="1" value="0"></div></div>
+        <div><h3>Select type of truck and amount</h3><div class="inline"><select id="truck_type_1"><option></option><option>Bogie masonry</option><option>Tipper masonry</option><option>Bogie mixed</option><option>Tipper mixed</option></select><input id="truck_qty_1" type="number" step="1" value="0"></div><div class="inline" style="margin-top:8px"><select id="truck_type_2"><option></option><option>Bogie masonry</option><option>Tipper masonry</option><option>Bogie mixed</option><option>Tipper mixed</option></select><input id="truck_qty_2" type="number" step="1" value="0"></div></div>
+      </div>
+      <div class="button-row"><button type="button" class="secondary" id="calc_bins">Calculate bins</button><button type="button" class="secondary" id="calc_trucks">Calculate trucks</button></div>
+      <div class="grid two" style="margin-top:8px"><div id="soil_volume_text" class="note">Soil removal volume: 0 m³, Weight: 0 tonnes</div><div id="concrete_volume_text" class="note">Concrete removal volume: 0 m³, Weight: 0 tonnes</div></div>
+    </div>
+
+    <h2>Labour and markup</h2>
+    <div class="grid four">
+      <div class="check full"><input id="manual_labour" type="checkbox"><label for="manual_labour">Enter man days manually?</label></div>
+      <div><label for="man_day_cost">Cost of 1 man day</label><input id="man_day_cost" data-save value="650" type="number" step="any"></div>
+      <div><label for="man_days_input">Number of man days</label><input id="man_days_input" value="0" type="number" step="any"></div>
+      <div><label for="markup">Markup percentage</label><input id="markup" data-save value="40" type="number" step="any"></div>
+      <div><label for="additional_material_cost">Additional materials</label><input id="additional_material_cost" value="0" type="number" step="any"></div>
+      <div><label for="additional_labour_cost">Additional labour</label><input id="additional_labour_cost" value="0" type="number" step="any"></div>
+    </div>
+    <div class="note">Markup should contain enough for uncalculated possibilities. Example: 10% job specific + 15% company overhead + 15% profit = 40%.</div>
+
+    <h2>Client and company information</h2>
+    <div class="grid four">
+      <div><label for="client_name">Client name</label><input id="client_name" value=""></div>
+      <div><label for="client_address">Client address</label><input id="client_address" value=""></div>
+      <div><label for="client_phone">Client phone number</label><input id="client_phone" value=""></div>
+      <div><label for="client_email">Client email address</label><input id="client_email" value=""></div>
+      <div><label for="company_name">Company name</label><input id="company_name" data-save value="Reset Contracting"></div>
+      <div><label for="company_contact">Company contact</label><input id="company_contact" data-save value="David Harvey"></div>
+      <div><label for="contact_phone">Contact phone number</label><input id="contact_phone" data-save value="0400 308 023"></div>
+      <div><label for="contact_email">Contact email address</label><input id="contact_email" data-save value="david@resetcontracting.com.au"></div>
+      <div class="full"><label for="notes">Notes</label><textarea id="notes"></textarea></div>
+    </div>
+
+    <div class="button-row no-print"><button type="button" id="calculate">Calculate</button><button type="button" id="create_quote">Create quote / scope</button><button type="button" id="save_values" class="secondary">Save values</button><button type="button" id="download_json" class="light">Save values to Driveway_values.json backup</button><button type="button" id="load_json" class="light">Load values from Driveway_values.json backup</button><input type="file" id="import_json_file" accept=".json,application/json" class="hidden"></div><div id="json_status" class="muted no-print"></div>
+    <div id="error" class="error"></div>
+
+    <div id="quote_preview" class="quote-preview"></div>
+  </section>
+
+  <aside class="panel results no-print">
+    <h2>Results</h2>
+    <div class="metric"><span>Calculated area</span><span class="value" id="r_area">0 m²</span></div>
+    <div class="metric"><span>Concrete volume</span><span class="value" id="r_volume">0 m³</span></div>
+    <div class="metric"><span>Number of sheets</span><span class="value" id="r_sheets">0</span></div>
+    <div class="metric"><span>Bags of chairs</span><span class="value" id="r_chairs">0</span></div>
+    <div class="metric"><span>Materials cost</span><span class="value" id="r_materials">$0</span></div>
+    <div class="metric"><span>Labour cost</span><span class="value" id="r_labour">$0</span></div>
+    <div class="metric"><span>Total cost estimate</span><span class="value" id="r_total">$0</span></div>
+    <div class="metric"><span>Charge incl. markup</span><span class="value big" id="r_charge">$0</span></div>
+    <div class="metric"><span>Total incl. GST</span><span class="value big" id="r_gst">$0</span></div>
+    <div class="footer-note">Use your browser’s print dialog to save the generated quote/scope as PDF.</div>
+  </aside>
+</main>
+<script>
+(function(){
+  const STORE_KEY = 'driveways-html-values-v1';
+  const JSON_FILENAME = 'Driveway_values.json';
+  const HANDLE_DB = 'driveways-json-handle-v1';
+  const HANDLE_STORE = 'handles';
+  const DIR_HANDLE_KEY = 'driveway_values_json_directory';
+  const FILE_HANDLE_KEY = 'driveway_values_json_file';
+  let connectedDirHandle = null;
+  let connectedFileHandle = null;
+  const baseDefaults = {
+    thickness_mm:'100', concrete_price:'280', mesh_price:'91', bag_chairs_price:'20', number_of_stairs:'0', avg_stair_length:'1000', avg_tread_depth:'250', avg_tread_height:'190', kerb:'0', base_pump_cost:'600', additional_hourly_rate:'180', pumped_m3_cost:'6', min_cartage_m3:'3', min_cartage_cost:'105', man_day_cost:'650', markup:'40', masonry_4m3:'550', masonry_6m3:'700', mixed_4m3:'720', mixed_6m3:'980', soil_thickness_mm:'110', concrete_excavation_thickness_mm:'110', bogie_masonry:'1050', tipper_masonry:'500', bogie_mixed:'800', tipper_mixed:'650', company_name:'Reset Contracting', company_contact:'David Harvey', contact_phone:'0400 308 023', contact_email:'david@resetcontracting.com.au'
+  };
+  let state = {area:0, volume_m3:0, sheets:0, bags:0, materials_cost:0, labour_cost:0, total:0, total_charge:0, total_charge_gst:0, man_days:0, kerb_area:0, kerb_volume:0, soil_area:0, concrete_area:0, soil_weight_text:'0', concrete_weight_text:'0', soil_removal_volume:'0', concrete_removal_volume:'0', num_mixed_bins_5t:0, num_mixed_bins_7t:0, num_masonry_bins_5t:0, num_masonry_bins_7t:0, num_mixed_trucks_12t:0, num_mixed_trucks_6t:0, num_masonry_trucks_12t:0, num_masonry_trucks_6t:0};
+  const $ = id => document.getElementById(id);
+  const val = id => ($(id)?.value ?? '').trim();
+  const num = (id, fallback=0) => { const raw = val(id); const n = parseFloat(raw === '' ? fallback : raw); return Number.isFinite(n) ? n : fallback; };
+  const checked = id => !!$(id)?.checked;
+  const setVal = (id, v) => { if($(id)) $(id).value = String(v); };
+  const money = n => '$' + formatNumber(n, true);
+  function formatNumber(n, isMoney=true){ n = Number(n)||0; if(Math.trunc(n) !== n){ const fixed = n.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}); return isMoney ? fixed : fixed.replace(/\.00$/,'').replace(/(\.\d)0$/,'$1'); } return Math.trunc(n).toLocaleString(); }
+  function tidy(n){ n=Number(n)||0; return Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/0+$/,'').replace(/\.$/,''); }
+  function round2(n){ n=Number(n)||0; return Number(n.toFixed(2)); }
+  function htmlEscape(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  function applyValues(values){
+    for(const [id,v] of Object.entries(values || {})) if($(id)) setVal(id,v);
+  }
+  function getSavedValues(){
+    try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}') || {}; }
+    catch(e) { return {}; }
+  }
+  function saveValues(showMessage=true){
+    const data = collectSettingsJson();
+    localStorage.setItem(STORE_KEY, jsonText(data));
+    const status = $('json_status');
+    if(status) status.textContent = `Saved values for this app. Use Save values to ${JSON_FILENAME} backup if you want a file copy.`;
+    if(showMessage) $('error').innerHTML = `<span class="ok">Saved values for this app.</span>`;
+  }
+  function resetValues(){
+    localStorage.removeItem(STORE_KEY);
+    applyValues(baseDefaults);
+    calculate();
+    $('error').innerHTML = '<span class="ok">Saved browser values reset. Built-in defaults restored.</span>';
+    const status = $('json_status'); if(status) status.textContent = 'Saved browser values reset. Built-in defaults restored.';
+  }
+
+
+  const jsonFieldMap = [
+    ['thickness_mm','thickness_mm'], ['concrete_price','price_per_m3'], ['mesh_price','price_per_sheet'], ['bag_chairs_price','bag_chairs_price'],
+    ['number_of_stairs','number_of_stairs'], ['avg_stair_length','avg_stair_length'], ['avg_tread_depth','avg_tread_depth'], ['avg_tread_height','avg_tread_height'], ['kerb','kerb'],
+    ['base_pump_cost','base_pump_cost'], ['additional_hourly_rate','additional_hourly_rate'], ['pumped_m3_cost','pumped_m3_cost'], ['min_cartage_m3','min_cartage_m3'], ['min_cartage_cost','min_cartage_cost'],
+    ['man_day_cost','man_day_cost'], ['markup','markup'], ['masonry_4m3','masonry_4m3'], ['masonry_6m3','masonry_6m3'], ['mixed_4m3','mixed_4m3'], ['mixed_6m3','mixed_6m3'],
+    ['soil_thickness_mm','soil_thickness_mm'], ['concrete_excavation_thickness_mm','concrete_excavation_thickness_mm'], ['bogie_masonry','bogie_masonry'], ['tipper_masonry','tipper_masonry'], ['bogie_mixed','bogie_mixed'], ['tipper_mixed','tipper_mixed'],
+    ['company_name','company_name'], ['company_contact','company_contact'], ['contact_phone','contact_phone'], ['contact_email','contact_email']
+  ];
+
+  function collectSettingsJson(){
+    const data = {};
+    jsonFieldMap.forEach(([id,key]) => { if($(id)) data[key] = val(id); });
+    return data;
+  }
+
+  function jsonText(data){
+    return JSON.stringify(data, null, 2) + '\n';
+  }
+
+  function hasFileSystemAccess(){
+    return 'showDirectoryPicker' in window || 'showOpenFilePicker' in window;
+  }
+
+  function openHandleDb(){
+    return new Promise((resolve, reject) => {
+      if(!('indexedDB' in window)) return reject(new Error('IndexedDB is not available.'));
+      const request = indexedDB.open(HANDLE_DB, 1);
+      request.onupgradeneeded = () => request.result.createObjectStore(HANDLE_STORE);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error || new Error('Could not open handle database.'));
+    });
+  }
+
+  async function getStoredHandle(key){
+    try{
+      const db = await openHandleDb();
+      return await new Promise((resolve, reject) => {
+        const tx = db.transaction(HANDLE_STORE, 'readonly');
+        const req = tx.objectStore(HANDLE_STORE).get(key);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => reject(req.error || new Error('Could not read saved handle.'));
+      });
+    }catch(e){ return null; }
+  }
+
+  async function setStoredHandle(key, handle){
+    try{
+      const db = await openHandleDb();
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(HANDLE_STORE, 'readwrite');
+        tx.objectStore(HANDLE_STORE).put(handle, key);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error || new Error('Could not save handle.'));
+      });
+    }catch(e){ /* Some browsers do not allow file handles in IndexedDB. Saving still works for this session. */ }
+  }
+
+  async function verifyHandlePermission(handle, mode='readwrite', request=false){
+    if(!handle || typeof handle.queryPermission !== 'function') return true;
+    const opts = {mode};
+    let permission = await handle.queryPermission(opts);
+    if(permission === 'granted') return true;
+    if(request && typeof handle.requestPermission === 'function'){
+      permission = await handle.requestPermission(opts);
+      return permission === 'granted';
+    }
+    return false;
+  }
+
+  async function writeJsonToFileHandle(fileHandle, data){
+    if(!await verifyHandlePermission(fileHandle, 'readwrite', true)) throw new Error('Permission to write Driveway_values.json was not granted.');
+    const writable = await fileHandle.createWritable();
+    await writable.write(jsonText(data));
+    await writable.close();
+  }
+
+  async function writeJsonToDirectoryHandle(dirHandle, data){
+    if(!await verifyHandlePermission(dirHandle, 'readwrite', true)) throw new Error('Permission to write to the selected folder was not granted.');
+    const fileHandle = await dirHandle.getFileHandle(JSON_FILENAME, {create:true});
+    const writable = await fileHandle.createWritable();
+    await writable.write(jsonText(data));
+    await writable.close();
+  }
+
+  async function readJsonFromDirectoryHandle(dirHandle){
+    if(!await verifyHandlePermission(dirHandle, 'read', false)) return {loaded:false, reason:'no-permission'};
+    try{
+      const fileHandle = await dirHandle.getFileHandle(JSON_FILENAME, {create:false});
+      const file = await fileHandle.getFile();
+      return {loaded:true, data: JSON.parse(await file.text())};
+    }catch(e){ return {loaded:false, reason:'not-found', error:e}; }
+  }
+
+  async function readJsonFromFileHandle(fileHandle){
+    if(!await verifyHandlePermission(fileHandle, 'read', false)) return {loaded:false, reason:'no-permission'};
+    try{
+      const file = await fileHandle.getFile();
+      return {loaded:true, data: JSON.parse(await file.text())};
+    }catch(e){ return {loaded:false, reason:'error', error:e}; }
+  }
+
+  async function loadStoredJsonHandles(){
+    connectedDirHandle = await getStoredHandle(DIR_HANDLE_KEY);
+    connectedFileHandle = await getStoredHandle(FILE_HANDLE_KEY);
+  }
+
+  async function chooseJsonFolder(){
+    if(!('showDirectoryPicker' in window)) throw new Error('This browser cannot connect a folder for direct JSON overwrite. Use Chrome or Edge.');
+    const dirHandle = await window.showDirectoryPicker({id:'driveways-json-folder', mode:'readwrite'});
+    if(!await verifyHandlePermission(dirHandle, 'readwrite', true)) throw new Error('Folder permission was not granted.');
+    connectedDirHandle = dirHandle;
+    connectedFileHandle = null;
+    await setStoredHandle(DIR_HANDLE_KEY, dirHandle);
+    return dirHandle;
+  }
+
+  async function chooseJsonFile(){
+    if(!('showOpenFilePicker' in window)) throw new Error('This browser cannot connect Driveway_values.json for direct overwrite. Use Chrome or Edge.');
+    const [fileHandle] = await window.showOpenFilePicker({
+      id:'driveways-json-file',
+      multiple:false,
+      types:[{description:'Driveway values JSON', accept:{'application/json':['.json']}}]
+    });
+    if(!await verifyHandlePermission(fileHandle, 'readwrite', true)) throw new Error('File permission was not granted.');
+    connectedFileHandle = fileHandle;
+    connectedDirHandle = null;
+    await setStoredHandle(FILE_HANDLE_KEY, fileHandle);
+    return fileHandle;
+  }
+
+  async function connectJsonFolder(){
+    try{
+      const dirHandle = await chooseJsonFolder();
+      let loadedText = '';
+      const existing = await readJsonFromDirectoryHandle(dirHandle);
+      if(existing.loaded){
+        const count = applySettingsJson(existing.data, {persist:true, showMessage:false});
+        loadedText = ` Loaded ${count} settings from the existing ${JSON_FILENAME}.`;
+      }
+      $('json_status').textContent = `Connected JSON folder. Save values will overwrite/create ${JSON_FILENAME} in that folder.${loadedText}`;
+      $('error').innerHTML = `<span class="ok">Connected JSON folder. Save values now overwrites ${JSON_FILENAME}.</span>`;
+    }catch(e){
+      if(e && e.name === 'AbortError'){
+        $('error').innerHTML = '<span class="error">Folder connection cancelled. No duplicate JSON was created.</span>';
+      }else{
+        $('error').innerHTML = '<span class="error">Could not connect JSON folder: ' + htmlEscape(e.message) + '</span>';
+      }
+    }
+  }
+
+  async function loadConnectedJsonIfAvailable(){
+    await loadStoredJsonHandles();
+    if(connectedDirHandle){
+      const result = await readJsonFromDirectoryHandle(connectedDirHandle);
+      if(result.loaded){
+        const count = applySettingsJson(result.data, {persist:false, showMessage:false});
+        if($('json_status')) $('json_status').textContent = `Loaded ${count} settings from connected ${JSON_FILENAME}.`;
+        return {loaded:true, count, source:'connected-folder'};
+      }
+    }
+    if(connectedFileHandle){
+      const result = await readJsonFromFileHandle(connectedFileHandle);
+      if(result.loaded){
+        const count = applySettingsJson(result.data, {persist:false, showMessage:false});
+        if($('json_status')) $('json_status').textContent = `Loaded ${count} settings from connected ${JSON_FILENAME}.`;
+        return {loaded:true, count, source:'connected-file'};
+      }
+    }
+    return {loaded:false};
+  }
+
+  function applySettingsJson(data, options={}){
+    const persist = options.persist !== false;
+    const showMessage = options.showMessage !== false;
+    if(!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('JSON must be an object.');
+    let count = 0;
+    jsonFieldMap.forEach(([id,key]) => {
+      let value;
+      if(Object.prototype.hasOwnProperty.call(data,key)) value = data[key];
+      else if(Object.prototype.hasOwnProperty.call(data,id)) value = data[id];
+      if(typeof value !== 'undefined' && $(id)) { setVal(id, value); count++; }
+    });
+    if(count === 0) throw new Error('No matching driveway settings were found in the JSON file.');
+    if(persist) saveValues(false);
+    calculate(false);
+    if(showMessage) $('error').innerHTML = `<span class="ok">Loaded ${count} settings from ${JSON_FILENAME} and saved them in this browser.</span>`;
+    return count;
+  }
+
+  async function autoLoadSameFolderJson(){
+    const status = $('json_status');
+    if(!status) return {loaded:false, reason:'no-status'};
+    if(location.protocol === 'file:'){
+      status.textContent = `Double-clicked HTML cannot auto-read ${JSON_FILENAME}; use Load backup JSON if needed.`;
+      return {loaded:false, reason:'file-protocol'};
+    }
+    try{
+      const response = await fetch('/values', {cache:'no-store'});
+      if(!response.ok){
+        status.textContent = `No ${JSON_FILENAME} found yet. Save values will create it.`;
+        return {loaded:false, reason:'not-found'};
+      }
+      const data = await response.json();
+      const count = applySettingsJson(data, {persist:false, showMessage:false});
+      status.textContent = `Loaded ${count} settings from ${JSON_FILENAME}.`;
+      return {loaded:true, count};
+    }catch(e){
+      status.textContent = `Could not load ${JSON_FILENAME}: ` + e.message;
+      return {loaded:false, reason:'error', error:e};
+    }
+  }
+
+  function downloadSettingsJson(message=true){
+    const data = collectSettingsJson();
+    const blob = new Blob([jsonText(data)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = JSON_FILENAME;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    if(message) $('error').innerHTML = `<span class="ok">Saved ${JSON_FILENAME} backup. Keep this file so you can reload your values later.</span>`;
+  }
+
+  function startServerHeartbeat(){
+    if(!(location.protocol === 'http:' || location.protocol === 'https:')) return;
+    const ping = () => fetch('/ping', {cache:'no-store'}).catch(() => {});
+    ping();
+    setInterval(ping, 5000);
+  }
+
+  async function saveDrivewayValuesJson(showMessage=true){
+    const data = collectSettingsJson();
+    const status = $('json_status');
+    if(!(location.protocol === 'http:' || location.protocol === 'https:')){
+      const msg = `This standalone HTML version saves values in the browser. Use Save values to JSON backup for a file copy.`;
+      if(status) status.textContent = msg;
+      $('error').innerHTML = `<span class="error">${htmlEscape(msg)}</span>`;
+      return;
+    }
+    try{
+      const response = await fetch('/save-values', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: jsonText(data)
+      });
+      if(!response.ok){
+        const text = await response.text();
+        throw new Error(text || `Save failed with HTTP ${response.status}`);
+      }
+      if(status) status.textContent = `Saved to ${JSON_FILENAME}.`;
+      if(showMessage) $('error').innerHTML = `<span class="ok">Saved values to ${JSON_FILENAME}.</span>`;
+    }catch(e){
+      const msg = `Could not save ${JSON_FILENAME}: ${e.message}`;
+      if(status) status.textContent = msg;
+      $('error').innerHTML = `<span class="error">${htmlEscape(msg)}</span>`;
+    }
+  }
+
+  function exportSettingsJson(){
+    downloadSettingsJson(true);
+  }
+
+  function importSettingsJson(file){
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try { applySettingsJson(JSON.parse(reader.result)); }
+      catch(e) { $('error').textContent = 'Could not import JSON: ' + e.message; }
+      $('import_json_file').value = '';
+    };
+    reader.onerror = () => { $('error').textContent = 'Could not read the selected JSON file.'; };
+    reader.readAsText(file);
+  }
+
+
+  async function readJsonFromFileHandleWithPermission(fileHandle){
+    if(!await verifyHandlePermission(fileHandle, 'read', true)) throw new Error('Permission to read Driveway_values.json was not granted.');
+    const file = await fileHandle.getFile();
+    return JSON.parse(await file.text());
+  }
+
+  async function getRememberedBackupHandle(){
+    if(connectedFileHandle) return connectedFileHandle;
+    connectedFileHandle = await getStoredHandle(FILE_HANDLE_KEY);
+    return connectedFileHandle;
+  }
+
+  async function rememberBackupHandle(fileHandle){
+    connectedFileHandle = fileHandle;
+    connectedDirHandle = null;
+    await setStoredHandle(FILE_HANDLE_KEY, fileHandle);
+  }
+
+  async function chooseBackupFileForSave(){
+    if(!('showSaveFilePicker' in window)) return null;
+    const fileHandle = await window.showSaveFilePicker({
+      id:'driveways-values-backup-file',
+      suggestedName: JSON_FILENAME,
+      types:[{description:'Driveway values JSON', accept:{'application/json':['.json']}}]
+    });
+    await rememberBackupHandle(fileHandle);
+    return fileHandle;
+  }
+
+  async function chooseBackupFileForLoad(){
+    if(!('showOpenFilePicker' in window)) return null;
+    const [fileHandle] = await window.showOpenFilePicker({
+      id:'driveways-values-backup-file',
+      multiple:false,
+      types:[{description:'Driveway values JSON', accept:{'application/json':['.json']}}]
+    });
+    await rememberBackupHandle(fileHandle);
+    return fileHandle;
+  }
+
+  async function getBackupFileHandle(mode, purpose){
+    // Option B: choose the backup file once, then reuse that same FileSystemFileHandle.
+    // After a browser reload the permission may return to "prompt"; requestPermission asks for access
+    // to the remembered file handle instead of reopening the file picker in Documents.
+    let fileHandle = await getRememberedBackupHandle();
+    if(!fileHandle){
+      fileHandle = purpose === 'save' ? await chooseBackupFileForSave() : await chooseBackupFileForLoad();
+    }
+    if(!fileHandle) throw new Error('No Driveway_values.json backup file was selected.');
+    const ok = await verifyHandlePermission(fileHandle, mode, true);
+    if(!ok) throw new Error(`Permission to ${purpose === 'save' ? 'write' : 'read'} ${JSON_FILENAME} was not granted.`);
+    await rememberBackupHandle(fileHandle);
+    return fileHandle;
+  }
+
+  async function saveBackupJsonSmart(message=true){
+    const data = collectSettingsJson();
+    const status = $('json_status');
+    if('showSaveFilePicker' in window || 'showOpenFilePicker' in window){
+      try{
+        const fileHandle = await getBackupFileHandle('readwrite', 'save');
+        await writeJsonToFileHandle(fileHandle, data);
+        if(status) status.textContent = `Saved values to remembered ${JSON_FILENAME} backup file.`;
+        if(message) $('error').innerHTML = `<span class="ok">Saved values to ${JSON_FILENAME} backup.</span>`;
+        return;
+      }catch(e){
+        if(e && e.name === 'AbortError'){
+          if(status) status.textContent = 'Save cancelled. No backup file was changed.';
+          return;
+        }
+        const msg = `Could not save to ${JSON_FILENAME} backup: ${e.message}`;
+        if(status) status.textContent = msg;
+        $('error').innerHTML = `<span class="error">${htmlEscape(msg)}</span>`;
+        return;
+      }
+    }
+    downloadSettingsJson(message);
+  }
+
+  async function loadBackupJsonSmart(){
+    const status = $('json_status');
+    if('showOpenFilePicker' in window || 'showSaveFilePicker' in window){
+      try{
+        const fileHandle = await getBackupFileHandle('read', 'load');
+        const data = await readJsonFromFileHandleWithPermission(fileHandle);
+        const count = applySettingsJson(data, {persist:true, showMessage:false});
+        if(status) status.textContent = `Loaded ${count} settings from remembered ${JSON_FILENAME} backup file.`;
+        $('error').innerHTML = `<span class="ok">Loaded ${count} settings from ${JSON_FILENAME} backup.</span>`;
+        return;
+      }catch(e){
+        if(e && e.name === 'AbortError'){
+          if(status) status.textContent = 'Load cancelled. No values were changed.';
+          return;
+        }
+        const msg = `Could not load ${JSON_FILENAME} backup: ${e.message}`;
+        if(status) status.textContent = msg;
+        $('error').innerHTML = `<span class="error">${htmlEscape(msg)}</span>`;
+        return;
+      }
+    }
+    $('import_json_file').click();
+  }
+
+  function togglePanels(){
+    const useArea = checked('use_area');
+    $('area_box').classList.toggle('hidden', !useArea);
+    $('width_box').classList.toggle('hidden', useArea);
+    $('length_box').classList.toggle('hidden', useArea);
+    document.querySelectorAll('.pump-field').forEach(el => el.classList.toggle('hidden', !checked('pump')));
+    $('excavation_panel').classList.toggle('hidden', !checked('excavation'));
+  }
+
+  function removalMetrics(){
+    const soilArea = num('soil_area',0);
+    const soilThicknessM = num('soil_thickness_mm',0) / 1000;
+    const soilRemovalVolume = soilArea * soilThicknessM;
+    let concreteArea = num('concrete_area',0);
+    const concreteThicknessM = num('concrete_excavation_thickness_mm',0) / 1000;
+    let concreteRemovalVolume = concreteArea * concreteThicknessM;
+    if(state.kerb_volume !== 0) concreteRemovalVolume = concreteArea * concreteThicknessM + state.kerb_volume;
+    const soilWeight = soilRemovalVolume * 1.5;
+    const concreteWeight = concreteRemovalVolume * 2.4;
+    state.soil_area = soilArea;
+    state.concrete_area = concreteArea;
+    state.soil_removal_volume = tidy(soilRemovalVolume);
+    state.concrete_removal_volume = tidy(concreteRemovalVolume);
+    state.soil_weight_text = tidy(soilWeight);
+    state.concrete_weight_text = tidy(concreteWeight);
+    $('soil_volume_text').textContent = `Soil removal volume: ${state.soil_removal_volume} m³, Weight: ${state.soil_weight_text} tonnes`;
+    $('concrete_volume_text').textContent = `Concrete removal volume: ${state.concrete_removal_volume} m³, Weight: ${state.concrete_weight_text} tonnes`;
+    return {soilArea, concreteArea, soilRemovalVolume, concreteRemovalVolume, soilWeight, concreteWeight};
+  }
+
+  function resetBinTruckCounts(){
+    state.num_mixed_bins_5t=state.num_mixed_bins_7t=state.num_masonry_bins_5t=state.num_masonry_bins_7t=0;
+    state.num_mixed_trucks_12t=state.num_mixed_trucks_6t=state.num_masonry_trucks_12t=state.num_masonry_trucks_6t=0;
+  }
+
+  function calculateBins(){
+    if(!checked('excavation')) return;
+    calculate(false);
+    resetBinTruckCounts();
+    $('truck_type_1').value=''; setVal('truck_qty_1',0); $('truck_type_2').value=''; setVal('truck_qty_2',0);
+    const m = removalMetrics();
+    let concreteWeight = m.concreteWeight;
+    if(m.soilWeight > 0){
+      const totalWeight = m.soilWeight + m.concreteWeight;
+      if(totalWeight <= 5){ state.num_mixed_bins_5t = 1; $('skip_type_1').value='4m^3 mixed'; setVal('skip_qty_1',1); concreteWeight = 0; }
+      else { state.num_mixed_bins_7t = 1; $('skip_type_1').value='6m^3 mixed'; setVal('skip_qty_1',1); concreteWeight = totalWeight - 7; }
+    }
+    if(concreteWeight > 0){
+      if(concreteWeight <= 5){ state.num_masonry_bins_5t = 1; $('skip_type_2').value='4m^3 masonry'; setVal('skip_qty_2',1); }
+      else { state.num_masonry_bins_7t = Math.ceil(concreteWeight/7); $('skip_type_2').value='6m^3 masonry'; setVal('skip_qty_2',state.num_masonry_bins_7t); }
+    } else { $('skip_type_2').value=''; setVal('skip_qty_2',0); }
+    calculate(false);
+  }
+
+  function calculateTrucks(){
+    if(!checked('excavation')) return;
+    calculate(false);
+    resetBinTruckCounts();
+    $('skip_type_1').value=''; setVal('skip_qty_1',0); $('skip_type_2').value=''; setVal('skip_qty_2',0);
+    const m = removalMetrics();
+    let concreteWeight = m.concreteWeight;
+    if(m.soilWeight > 0){
+      const totalWeight = m.soilWeight + m.concreteWeight;
+      if(totalWeight <= 6){ state.num_mixed_trucks_6t = 1; $('truck_type_1').value='Tipper mixed'; setVal('truck_qty_1',1); concreteWeight = 0; }
+      else { state.num_mixed_trucks_12t = 1; $('truck_type_1').value='Bogie mixed'; setVal('truck_qty_1',1); concreteWeight = totalWeight - 12; }
+    }
+    if(concreteWeight > 0){
+      if(concreteWeight <= 6){ state.num_masonry_trucks_6t = 1; $('truck_type_2').value='Tipper masonry'; setVal('truck_qty_2',1); }
+      else { state.num_masonry_trucks_12t = Math.ceil(concreteWeight/12); $('truck_type_2').value='Bogie masonry'; setVal('truck_qty_2',state.num_masonry_trucks_12t); }
+    } else { $('truck_type_2').value=''; setVal('truck_qty_2',0); }
+    calculate(false);
+  }
+
+  function selectedRemovalCost(){
+    const skipCosts = {'4m^3 mixed':'mixed_4m3','6m^3 mixed':'mixed_6m3','4m^3 masonry':'masonry_4m3','6m^3 masonry':'masonry_6m3'};
+    const truckCosts = {'Bogie masonry':'bogie_masonry','Tipper masonry':'tipper_masonry','Bogie mixed':'bogie_mixed','Tipper mixed':'tipper_mixed'};
+    let cost=0;
+    for(const [typeId, qtyId] of [['skip_type_1','skip_qty_1'],['skip_type_2','skip_qty_2']]){ const t=val(typeId), q=num(qtyId,0); if(t && q) cost += q * num(skipCosts[t],0); }
+    for(const [typeId, qtyId] of [['truck_type_1','truck_qty_1'],['truck_type_2','truck_qty_2']]){ const t=val(typeId), q=num(qtyId,0); if(t && q) cost += q * num(truckCosts[t],0); }
+    return cost;
+  }
+
+  function labourDays(area, numberOfStairs, stairLengthM, kerbM){
+    let days;
+    if(checked('manual_labour')) days = num('man_days_input',0);
+    else if(area <= 15) days = 2;
+    else if(area <= 25) days = 4;
+    else if(area <= 40) days = 5;
+    else if(area <= 50) days = 6;
+    else days = 7 + Math.ceil((area - 60) / 15);
+    let stairDays=0;
+    const totalStairLength = numberOfStairs * stairLengthM;
+    if(numberOfStairs > 2 && !checked('manual_labour')) stairDays += 2;
+    if(numberOfStairs > 5) stairDays += Math.floor(numberOfStairs / 5);
+    if(totalStairLength > 13) stairDays += Math.floor(totalStairLength / 13);
+    days += stairDays;
+    let kerbDays=0;
+    if(kerbM > 3 && !checked('manual_labour')) kerbDays += 1;
+    if(kerbM > 6) kerbDays += 1;
+    if(kerbM >= 12) kerbDays += Math.floor(kerbM / 10) * 2;
+    days += kerbDays;
+    if(checked('excavation') && !checked('manual_labour')){
+      const soilAreaVal = val('soil_area') !== '' ? num('soil_area',0) : 0;
+      let concreteAreaVal;
+      if(val('concrete_area') !== '') concreteAreaVal = num('concrete_area',0) + state.kerb_area;
+      else concreteAreaVal = state.kerb_area;
+      const totalRemovalArea = soilAreaVal + concreteAreaVal;
+      let add=0;
+      if(totalRemovalArea <= 20) add = 0;
+      else if(totalRemovalArea <= 25) add = 2;
+      else add = 2 + 2 * Math.ceil((totalRemovalArea - 25) / 50);
+      days += add;
+    }
+    return days;
+  }
+
+  function calculate(showErrors=true){
+    try{
+      togglePanels();
+      state.kerb_area=0; state.kerb_volume=0;
+      const thicknessM = (num('thickness_mm') * 1.1) / 1000;
+      const area = checked('use_area') ? num('area_input',0) : num('width',0) * num('length',0);
+      state.area = area;
+      let volume = area * thicknessM;
+      const numberOfStairs = num('number_of_stairs',0);
+      const stairLengthM = num('avg_stair_length',0) / 1000;
+      const kerbM = num('kerb',0);
+      let sheetArea = 0;
+      if(kerbM >= 1){
+        state.kerb_area = round2(0.8 * kerbM);
+        sheetArea += state.kerb_area;
+        state.kerb_volume = round2(state.kerb_area * 0.25);
+        volume += state.kerb_volume;
+      }
+      if(numberOfStairs >= 1){
+        const hMm = num('avg_tread_height',0), dMm = num('avg_tread_depth',0);
+        const hM = hMm / 1000, dM = dMm / 1000;
+        const stairArea = (hM + dM) * stairLengthM * numberOfStairs;
+        sheetArea += stairArea;
+        let stairVolume = ((hMm/2) + 200) * Math.sqrt(dMm**2 + hMm**2) * numberOfStairs * (stairLengthM <= 1 ? 1 : stairLengthM);
+        stairVolume = stairVolume / 1000000 * 1.1;
+        volume += stairVolume;
+      }
+      state.volume_m3 = volume;
+      sheetArea += area;
+      state.sheets = Math.ceil(sheetArea / 10);
+      state.bags = Math.ceil(sheetArea / 50);
+      let materials = volume * num('concrete_price',0) + state.sheets * num('mesh_price',0) + state.bags * num('bag_chairs_price',0);
+      materials += num('additional_material_cost',0);
+      if(checked('pump')){
+        const base = num('base_pump_cost',0), hourly = num('additional_hourly_rate',0), pumped = num('pumped_m3_cost',0);
+        let addHourly = (volume / 16) * hourly;
+        const lineLen = num('pump_line_length',0);
+        if(lineLen !== 0 && volume > 12) addHourly += addHourly * lineLen / 50;
+        if(checked('pump_hard')) addHourly += hourly;
+        materials += base + addHourly + volume * pumped;
+      }
+      const minM3 = num('min_cartage_m3',0);
+      if(volume < minM3) materials += (minM3 - volume) * num('min_cartage_cost',0);
+      if(checked('excavation')) materials += selectedRemovalCost();
+      state.materials_cost = materials;
+      const daysBeforeAdd = labourDays(area, numberOfStairs, stairLengthM, kerbM);
+      const manDayCost = num('man_day_cost',0);
+      let labour = daysBeforeAdd * manDayCost;
+      labour += num('additional_labour_cost',0);
+      state.labour_cost = labour;
+      state.man_days = manDayCost ? labour / manDayCost : daysBeforeAdd;
+      state.total = materials + labour;
+      const markup = num('markup',0) / 100;
+      state.total_charge = state.total * (1 + markup);
+      state.total_charge_gst = state.total_charge * 1.1;
+      if(checked('excavation')) removalMetrics();
+      updateResults();
+      if(showErrors) $('error').textContent = '';
+      return state;
+    }catch(e){ if(showErrors) $('error').textContent = 'Please enter valid numbers.'; throw e; }
+  }
+
+  function updateResults(){
+    $('r_area').textContent = `${formatNumber(state.area,false)} m²`;
+    $('r_volume').textContent = `${formatNumber(state.volume_m3,false)} m³`;
+    $('r_sheets').textContent = state.sheets;
+    $('r_chairs').textContent = state.bags;
+    $('r_materials').textContent = money(state.materials_cost);
+    $('r_labour').textContent = money(state.labour_cost);
+    $('r_total').textContent = money(state.total);
+    $('r_charge').textContent = money(state.total_charge);
+    $('r_gst').textContent = money(state.total_charge_gst);
+  }
+
+  function quoteData(){
+    calculate();
+    const anySelected = (pairs, predicate) => pairs.some(([typeId,qtyId]) => predicate(val(typeId)) && num(qtyId,0)>0);
+    const soilRemoval = anySelected([['skip_type_1','skip_qty_1'],['skip_type_2','skip_qty_2'],['truck_type_1','truck_qty_1'],['truck_type_2','truck_qty_2']], t => t.includes('mixed'));
+    const concreteRemoval = anySelected([['skip_type_1','skip_qty_1'],['skip_type_2','skip_qty_2'],['truck_type_1','truck_qty_1'],['truck_type_2','truck_qty_2']], t => t.includes('mixed') || t.includes('masonry'));
+    const data = {
+      client_name: val('client_name'), client_address: val('client_address'), client_phone: val('client_phone'), client_email: val('client_email'),
+      company_name: val('company_name'), company_contact: val('company_contact'), contact_phone: val('contact_phone'), contact_email: val('contact_email'),
+      total_charge: money(state.total_charge), total_charge_gst: money(state.total_charge_gst), soil_removal: soilRemoval ? 'Yes':'No', concrete_removal: concreteRemoval ? 'Yes':'No', notes: val('notes'), area: state.area,
+      reinforced_steel: num('mesh_price',0) > 0 ? 'Yes':'No', pump: checked('pump') ? 'Yes':'No', pump_line_length: checked('pump') ? val('pump_line_length') : '0', pump_hard_terrain: checked('pump') && checked('pump_hard') ? 'Yes':'No',
+      man_days: state.man_days, thickness_mm: val('thickness_mm'), edgeboard: val('edgeboard'), edgeboard_Lm: Math.ceil((parseInt(val('edgeboard')||'0',10)||0)*1.2), volume_m3: state.volume_m3,
+      sheets_of_mesh: state.sheets, bags_of_chairs: state.bags, number_of_stairs: num('number_of_stairs',0)>0?val('number_of_stairs'):'0', average_stair_length: num('number_of_stairs',0)>0?val('avg_stair_length'):'0', kerb: num('kerb',0)>0?val('kerb'):'0',
+      'number_of_mixed_4m3_skips (else trucks)': state.num_mixed_bins_5t || (val('skip_type_1')==='4m^3 mixed'?num('skip_qty_1',0):0) || (val('skip_type_2')==='4m^3 mixed'?num('skip_qty_2',0):0),
+      'number_of_mixed_6m3_skips (else trucks)': state.num_mixed_bins_7t || (val('skip_type_1')==='6m^3 mixed'?num('skip_qty_1',0):0) || (val('skip_type_2')==='6m^3 mixed'?num('skip_qty_2',0):0),
+      'number_of_masonry_4m3_skips (else trucks)': state.num_masonry_bins_5t || (val('skip_type_1')==='4m^3 masonry'?num('skip_qty_1',0):0) || (val('skip_type_2')==='4m^3 masonry'?num('skip_qty_2',0):0),
+      'number_of_masonry_6m3_skips (else trucks)': state.num_masonry_bins_7t || (val('skip_type_1')==='6m^3 masonry'?num('skip_qty_1',0):0) || (val('skip_type_2')==='6m^3 masonry'?num('skip_qty_2',0):0),
+      'number_of_mixed_Bogies (else skips)': state.num_mixed_trucks_12t || (val('truck_type_1')==='Bogie mixed'?num('truck_qty_1',0):0) || (val('truck_type_2')==='Bogie mixed'?num('truck_qty_2',0):0),
+      'number_of_mixed_6T_Tipper (else skips)': state.num_mixed_trucks_6t || (val('truck_type_1')==='Tipper mixed'?num('truck_qty_1',0):0) || (val('truck_type_2')==='Tipper mixed'?num('truck_qty_2',0):0),
+      'number_of_masonry_Bogies (else skips)': state.num_masonry_trucks_12t || (val('truck_type_1')==='Bogie masonry'?num('truck_qty_1',0):0) || (val('truck_type_2')==='Bogie masonry'?num('truck_qty_2',0):0),
+      'number_of_masonry_6T_Tipper (else skips)': state.num_masonry_trucks_6t || (val('truck_type_1')==='Tipper masonry'?num('truck_qty_1',0):0) || (val('truck_type_2')==='Tipper masonry'?num('truck_qty_2',0):0)
+    };
+    if(checked('excavation')) Object.assign(data,{soil_area:state.soil_area, soil_weight:state.soil_weight_text, concrete_area:state.concrete_area, concrete_weight:state.concrete_weight_text});
+    return data;
+  }
+
+  function validateQuote(data){
+    for(const [k,v] of Object.entries(data)){
+      if(k !== 'notes' && (v === '' || v === null || typeof v === 'undefined')) return k;
+    }
+    return null;
+  }
+  function labelKey(k){ return k.replaceAll('_',' '); }
+  function row(k,v){ return `<tr><td>${htmlEscape(labelKey(k))}</td><td>${htmlEscape(v)}</td></tr>`; }
+  function createQuote(){
+    const data = quoteData();
+    const missing = validateQuote(data);
+    if(missing){ $('error').textContent = `Error: Please fill in the ${labelKey(missing)} field.`; return; }
+    $('error').textContent = '';
+    const quote = `
+      <div class="print-page" id="quote_page"><h1>${htmlEscape(data.company_name)}</h1><div>${htmlEscape(data.company_contact)} · ${htmlEscape(data.contact_phone)} · ${htmlEscape(data.contact_email)}</div><h2>Price Estimation</h2>
+      <table class="print-table"><tbody>
+        ${row('Client Name',data.client_name)}${row('Client Address',data.client_address)}${row('Client Phone Number',data.client_phone)}${row('Client Email',data.client_email)}
+        ${row('Area of concrete to install',`${tidy(data.area)} m²`)}${row('Average concrete thickness',`${data.thickness_mm} mm`)}${row('Reinforced with steel',data.reinforced_steel)}${row('Stairs',data.number_of_stairs)}${row('Kerb',`${data.kerb} m`)}${row('Concrete Pump',data.pump)}${row('Estimated Charge',`${data.total_charge} plus GST`)}${row('Estimated Total Charge',`${data.total_charge_gst} including GST`)}
+        ${checked('excavation') ? row('Soil removal',data.soil_removal)+row('Concrete removal',data.concrete_removal)+row('Soil excavation area',`${data.soil_area} m²`)+row('Approximate soil weight',`${data.soil_weight} tonne/tonnes`)+row('Concrete excavation area',`${data.concrete_area} m²`)+row('Approximate concrete weight',`${data.concrete_weight} tonne/tonnes`) : ''}
+      </tbody></table><h2>Notes</h2><div class="print-notes">${htmlEscape(data.notes)}</div></div>`;
+    const order = ['client_address','client_name','client_phone','notes','volume_m3','man_days','pump','pump_line_length','pump_hard_terrain','area','thickness_mm','edgeboard_Lm','reinforced_steel','sheets_of_mesh','bags_of_chairs','number_of_stairs','average_stair_length','kerb','soil_removal','soil_area','soil_weight','concrete_removal','concrete_area','concrete_weight','number_of_mixed_4m3_skips (else trucks)','number_of_mixed_6m3_skips (else trucks)','number_of_masonry_4m3_skips (else trucks)','number_of_masonry_6m3_skips (else trucks)','number_of_mixed_Bogies (else skips)','number_of_mixed_6T_Tipper (else skips)','number_of_masonry_Bogies (else skips)','number_of_masonry_6T_Tipper (else skips)'];
+    const units = {volume_m3:'m³', pump_line_length:'m', thickness_mm:'mm', area:'m²', edgeboard_Lm:'m', average_stair_length:'mm', kerb:'m', soil_area:'m²', soil_weight:'tonne/tonnes', concrete_area:'m²', concrete_weight:'tonne/tonnes'};
+    const scopeRows = order.filter(k => k in data).filter(k => !(data[k] === 'No' && ['pump_line_length','pump_hard_terrain'].includes(k))).filter(k => !(k === 'average_stair_length' && data.number_of_stairs === '0')).map(k => row(k, k==='notes' ? data[k].replace(/\n/g,' / ') : `${tidy(data[k])}${units[k]?' '+units[k]:''}`)).join('');
+    const scope = `<div class="print-page page-break" id="scope_page"><h1>Scope Summary</h1><table class="print-table"><tbody>${scopeRows}</tbody></table></div>`;
+    $('quote_preview').innerHTML = quote + scope + '<div class="button-row no-print"><button onclick="window.print()">Print / Save as PDF</button></div>';
+    $('quote_preview').style.display = 'block';
+    $('quote_preview').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  document.querySelectorAll('input,select,textarea').forEach(el => el.addEventListener('input', () => { try{ calculate(false); }catch(e){} }));
+  document.querySelectorAll('input[type=checkbox],select').forEach(el => el.addEventListener('change', () => { try{ calculate(false); }catch(e){} }));
+  $('calculate').addEventListener('click', () => calculate(true));
+  $('save_values').addEventListener('click', () => saveValues(true));
+  $('download_json').addEventListener('click', () => saveBackupJsonSmart(true));
+  $('load_json').addEventListener('click', () => loadBackupJsonSmart());
+  $('import_json_file').addEventListener('change', e => importSettingsJson(e.target.files && e.target.files[0]));
+  $('calc_bins').addEventListener('click', calculateBins);
+  $('calc_trucks').addEventListener('click', calculateTrucks);
+  $('create_quote').addEventListener('click', createQuote);
+  (function init(){
+    applyValues(baseDefaults);
+    const saved = getSavedValues();
+    const savedCount = Object.keys(saved).length;
+    if(savedCount){
+      applyValues(saved);
+      $('json_status').textContent = `Loaded ${savedCount} saved values for this app. Use the Driveway_values.json backup buttons to save/load a real file copy.`;
+    }else{
+      $('json_status').textContent = `Built-in defaults loaded. First time only, choose where to save/load ${JSON_FILENAME}; after that the same file is reused.`;
+    }
+    togglePanels();
+    calculate(false);
+  })();
+})();
+</script>
+</body>
+</html>
