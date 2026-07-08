@@ -93,12 +93,12 @@ textarea{min-height:110px;}
     <h2>Excavation / removal</h2>
     <div class="check"><input id="excavation" type="checkbox"><label for="excavation">Excavation/removal?</label></div>
     <div id="excavation_panel" class="hidden">
-      <div class="note">If kerb &gt; 1, the original program always adds concrete excavation. Calculate bins/trucks estimates an amount; use notes to discuss removal and availability.</div>
+      <div class="note">If kerb &gt; 1, the calculator also includes concrete excavation. Calculate bins/trucks estimates an amount. Skip disposal rates are fixed in the calculator and are not editable on mobile.</div>
       <div class="grid four">
-        <div><label for="masonry_4m3">4m³ masonry skip cost (5T)</label><input id="masonry_4m3" data-save value="550" type="number" step="any"></div>
-        <div><label for="masonry_6m3">6m³ masonry skip cost (7T)</label><input id="masonry_6m3" data-save value="700" type="number" step="any"></div>
-        <div><label for="mixed_4m3">4m³ mixed skip cost (5T)</label><input id="mixed_4m3" data-save value="720" type="number" step="any"></div>
-        <div><label for="mixed_6m3">6m³ mixed skip cost (7T)</label><input id="mixed_6m3" data-save value="980" type="number" step="any"></div>
+        <input id="masonry_4m3" value="500" type="hidden">
+        <input id="masonry_6m3" value="600" type="hidden">
+        <input id="mixed_4m3" value="1000" type="hidden">
+        <input id="mixed_6m3" value="1200" type="hidden">
         <div><label for="bogie_masonry">Bogie masonry (12T)</label><input id="bogie_masonry" data-save value="1050" type="number" step="any"></div>
         <div><label for="tipper_masonry">Tipper masonry (6T)</label><input id="tipper_masonry" data-save value="500" type="number" step="any"></div>
         <div><label for="bogie_mixed">Bogie mixed (12T)</label><input id="bogie_mixed" data-save value="800" type="number" step="any"></div>
@@ -128,21 +128,6 @@ textarea{min-height:110px;}
       <div><label for="additional_material_cost">Additional materials</label><input id="additional_material_cost" value="0" type="number" step="any"></div>
       <div><label for="additional_labour_cost">Additional labour</label><input id="additional_labour_cost" value="0" type="number" step="any"></div>
     </div>
-    <div class="note">Markup should contain enough for uncalculated possibilities. Example: 10% job specific + 15% company overhead + 15% profit = 40%.</div>
-
-    <h2>Client and company information</h2>
-    <div class="grid four">
-      <div><label for="client_name">Client name</label><input id="client_name" value=""></div>
-      <div><label for="client_address">Client address</label><input id="client_address" value=""></div>
-      <div><label for="client_phone">Client phone number</label><input id="client_phone" value=""></div>
-      <div><label for="client_email">Client email address</label><input id="client_email" value=""></div>
-      <div><label for="company_name">Company name</label><input id="company_name" data-save value="Reset Contracting"></div>
-      <div><label for="company_contact">Company contact</label><input id="company_contact" data-save value="David Harvey"></div>
-      <div><label for="contact_phone">Contact phone number</label><input id="contact_phone" data-save value="0400 308 023"></div>
-      <div><label for="contact_email">Contact email address</label><input id="contact_email" data-save value="david@resetcontracting.com.au"></div>
-      <div class="full"><label for="notes">Notes</label><textarea id="notes"></textarea></div>
-    </div>
-
     <div class="button-row no-print"><button type="button" id="calculate">Calculate</button><button type="button" id="save_values" class="secondary">Save values</button></div><div id="json_status" class="muted no-print"></div>
     <div id="error" class="error"></div>
 
@@ -164,7 +149,7 @@ textarea{min-height:110px;}
 </main>
 <script>
 (function(){
-  const STORE_KEY = 'driveways-mobile-values-v2';
+  const STORE_KEY = 'driveways-mobile-values-v3';
   const JSON_FILENAME = 'Driveway_values.json';
   const HANDLE_DB = 'driveways-json-handle-v1';
   const HANDLE_STORE = 'handles';
@@ -173,7 +158,7 @@ textarea{min-height:110px;}
   let connectedDirHandle = null;
   let connectedFileHandle = null;
   const baseDefaults = {
-    thickness_mm:'100', concrete_price:'300', mesh_price:'100', bag_chairs_price:'40', number_of_stairs:'0', avg_stair_length:'1000', avg_tread_depth:'250', avg_tread_height:'190', kerb:'0', base_pump_cost:'750', additional_hourly_rate:'180', pumped_m3_cost:'6', min_cartage_m3:'3', min_cartage_cost:'105', man_day_cost:'650', markup:'40', masonry_4m3:'550', masonry_6m3:'700', mixed_4m3:'720', mixed_6m3:'980', soil_thickness_mm:'110', concrete_excavation_thickness_mm:'110', bogie_masonry:'1050', tipper_masonry:'500', bogie_mixed:'800', tipper_mixed:'650', company_name:'Reset Contracting', company_contact:'David Harvey', contact_phone:'0400 308 023', contact_email:'david@resetcontracting.com.au'
+    thickness_mm:'100', concrete_price:'300', mesh_price:'100', bag_chairs_price:'40', number_of_stairs:'0', avg_stair_length:'1000', avg_tread_depth:'250', avg_tread_height:'190', kerb:'0', base_pump_cost:'750', additional_hourly_rate:'180', pumped_m3_cost:'6', min_cartage_m3:'3', min_cartage_cost:'105', man_day_cost:'650', markup:'40', masonry_4m3:'500', masonry_6m3:'600', mixed_4m3:'1000', mixed_6m3:'1200', soil_thickness_mm:'110', concrete_excavation_thickness_mm:'110', bogie_masonry:'1050', tipper_masonry:'500', bogie_mixed:'800', tipper_mixed:'650', company_name:'Reset Contracting', company_contact:'David Harvey', contact_phone:'0400 308 023', contact_email:'david@resetcontracting.com.au'
   };
   let state = {area:0, volume_m3:0, sheets:0, bags:0, materials_cost:0, labour_cost:0, total:0, total_charge:0, total_charge_gst:0, man_days:0, kerb_area:0, kerb_volume:0, soil_area:0, concrete_area:0, soil_weight_text:'0', concrete_weight_text:'0', soil_removal_volume:'0', concrete_removal_volume:'0', num_mixed_bins_5t:0, num_mixed_bins_7t:0, num_masonry_bins_5t:0, num_masonry_bins_7t:0, num_mixed_trucks_12t:0, num_mixed_trucks_6t:0, num_masonry_trucks_12t:0, num_masonry_trucks_6t:0};
   const $ = id => document.getElementById(id);
